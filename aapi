@@ -1,1 +1,342 @@
-dasdadfz
+"bdip_api_pgm_id","bdip_sys_div_cd","bdip_user_id","api_athn_val","efct_st_ymd","efct_exp_ymd","use_yn","reg_id","reg_date","amd_id","amd_date"
+OP-301,_,ihub001@kt.com,RfbOPyI1USktdlMGmk5uEn7OS4qEXD,"20180117","20180417",Y,all00@kt.com,2018-01-17 11:22:33,all00@kt.com,2018-01-17 11:22:33
+OP-301,_,ihub003@kt.com,nSQBKvIlEk2KWXZny3dLkXlX09R9PG,"20190122","20270430",Y,all00@kt.com,2019-01-22 17:20:01,all00@kt.com,2019-01-22 17:20:01
+OP-301,_,all00@kt.com,kijkqOFy0zbn9da7g5NyzmaoWdrTIw,"20171106","20190801",Y,null,2017-11-07 15:29:30,eomjoo0@kt.com,2019-07-31 13:13:27
+OP-301,_,"91201241@ktfriend.com",CVUM10R5fD3qEb3NnVSfbuZ6oiResF,"20180424","20270701",Y,all00@kt.com,2018-04-24 11:15:49,all00@kt.com,2018-04-24 11:15:49
+OP-301,_,ihub002@kt.com,RSn7NU38WQXCaJWlQ4y1xeXM53T6J8,"20190128","20190428",Y,all00@kt.com,2019-01-28 11:23:59,all00@kt.com,2019-01-28 11:23:59
+OP-301,_,shin.dongmin@kt.com,ambxzXtC33oRkuebiHbLIR36uyjlYd,"20171214","20180315",Y,null,2017-12-15 15:40:33,null,2017-12-15 15:40:42
+OP-301,_,"91201241@kt.com",SXAohm5tuLJkCJCBfsDl39aj1is4ud,"20200728","20210731",Y,all05@kt.com,2020-07-28 14:11:34,all05@kt.com,2020-07-28 14:11:34
+OP-301,_,"91195077@kt.com",NguYH0Ve7i7dCarx8wUSVGiHnGo5XD,"20180314","20281101",Y,all00@kt.com,2018-02-28 14:48:12,all00@kt.com,2018-03-14 11:12:56
+OP-302,_,ksshon@kt.com,z6qkIJ1akjEPR5KqiD1g8NDjSUJRJa,"20191224","20200324",Y,all00@kt.com,2019-12-24 16:26:44,all00@kt.com,2019-12-24 16:26:44
+TEST-S,S,"91201241@ktfriend.com","9QezX7UKda6DHx9GYQmkwpfidDy9GP","20211001","20211006",Y,all05@kt.com,2021-08-25 17:58:10,all05@kt.com,2021-10-05 13:27:47
+bdip-100,_,kim.jae_hwan@kt.com,ambxzXtC33oRkuebiHbLIR36uyjlYd,"20200623","20300623",Y,all00@kt.com,2020-06-25 10:22:29,all00@kt.com,2020-06-25 10:22:29
+ftppl-02,,bdiptest,testtesttest123,"20210117","20241231",Y,,,,
+ftppl-02,,test004@kt.com,V6jHy44J4ShDEzt5W4GBuTTvKpcHz4,"20210117","20241231",Y,,,,
+ftppl-02,F,evan.shin@kt.com,SVSSKxv0O16HmMoUDUHnMY3sS6XAUl,"20220301","20241231",Y,,,,
+ftppl-02,,test002@kt.com,test002,"20210117","20241231",Y,,,,
+ftppl-02,,test001@kt.com,test001,"20210117","20241231",Y,,,,
+ftppl-02,F,jenny@whitescan.com,rjfaJSEe2u5wgfvs0Mg1nxsQeVtqt3,"20220101","20991231",Y,all00@kt.com,2022-03-08 09:55:25,,
+ftppl-02,,sample1,o7NSKkri8coItw6gcz0c,"20210117","20241231",Y,,,,
+ftppl-03,F,sample1,o7NSKkri8coItw6gcz0c,"20210117","20241231",Y,,2023-03-07 11:05:11,,
+ftppl-03,F,jenny@whitescan.com,rjfaJSEe2u5wgfvs0Mg1nxsQeVtqt3,"20220101","20991231",Y,all00@kt.com,2022-03-08 09:55:25,,
+ftppl-05,F,evan.shin@kt.com,SVSSKxv0O16HmMoUDUHnMY3sS6XAUl,"20210608","20220607",Y,alp01@kt.com,2021-03-16 09:55:25,,
+ftppl-06,F,evan.shin@kt.com,SVSSKxv0O16HmMoUDUHnMY3sS6XAUl,"20210608","20220607",Y,alp01@kt.com,2021-03-16 09:55:25,,
+ftppl-06,F,sample1,o7NSKkri8coItw6gcz0c,"20210117","20241231",Y,,2023-03-07 11:05:11,,
+ftppl-06,F,jenny@whitescan.com,rjfaJSEe2u5wgfvs0Mg1nxsQeVtqt3,"20220101","20991231",Y,all00@kt.com,2022-03-08 09:55:25,,
+ftppl-07,F,evan.shin@kt.com,SVSSKxv0O16HmMoUDUHnMY3sS6XAUl,"20210608","20220607",Y,alp01@kt.com,2021-03-16 09:55:25,,
+ftppl-07,F,jenny@whitescan.com,rjfaJSEe2u5wgfvs0Mg1nxsQeVtqt3,"20220101","20991231",Y,all00@kt.com,2022-03-08 09:55:25,,
+ftppl-07,F,sample1,o7NSKkri8coItw6gcz0c,"20210117","20241231",Y,,2023-03-07 11:05:11,,
+ftppl-09,F,evan.shin@kt.com,SVSSKxv0O16HmMoUDUHnMY3sS6XAUl,"20220301","20220707",Y,,,,
+ftppl-09,F,sample1,o7NSKkri8coItw6gcz0c,"20210117","20241231",Y,,2023-03-07 11:05:11,,
+ftppl-09,F,jenny@whitescan.com,rjfaJSEe2u5wgfvs0Mg1nxsQeVtqt3,"20220101","20991231",Y,all00@kt.com,2022-03-08 09:55:25,,
+mofbeach-1,_,mofbeach1,cOb9mDr9UMFlWaNufTEC,"20210705","20220831",Y,,,,
+mofbeach-2,_,mofbeach1,cOb9mDr9UMFlWaNufTEC,"20210705","20220831",Y,,,,
+op-301,_,alp02@kt.com,oM5mqPc4cEQ3js4xvnecM8mLnOcFE8,"20200624","20210930",Y,all01@kt.com,2020-06-25 10:19:28,all01@kt.com,2020-06-25 10:19:28
+op-301,_,alp01@kt.com,smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20210930",Y,all01@kt.com,2020-06-25 09:20:28,all01@kt.com,2020-06-25 10:19:32
+op-402,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-403,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-404,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-405,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-407,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-408,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-409,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-410,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-411,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-412,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20200331",Y,all00@kt.com,2018-04-08 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-413,_,jeongjaewon@mkinternet.com,UlsL3fHQSY0N7bznR7G1Q86jdOdSNp,"20180408","20210331",Y,all00@kt.com,2018-04-11 00:00:00,all00@kt.com,2019-01-10 10:49:36
+op-413,_,"4005sjp@naver.com",smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20221231",Y,all00@kt.com,2020-06-25 10:16:42,all00@kt.com,2020-06-25 10:16:42
+op-501,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:02,,
+op-501,T,"4005sjp@naver.com",smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20221231",Y,all00@kt.com,2020-11-02 18:00:57,all00@kt.com,2020-11-02 18:00:57
+op-501,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2020-08-10 17:21:35,all00@kt.com,2020-08-10 17:21:35
+op-501,T,onShop@kt.com,kijkqOFy0zbn9da7g5NyzmaoWdrTIw,"20190901","20201031",Y,all00@kt.com,2019-09-16 15:25:58,all00@kt.com,2019-09-16 15:25:58
+op-501,T,changupin@bigsight.com,tPwLtuiyRCgcFT9k6Nl9gosIpOwi9s,"20210103","20220531",Y,all00@kt.com,2021-01-04 10:06:48,all00@kt.com,2021-01-04 10:06:48
+op-501,T,oasisbusiness@bigsight.com,DmVZmjIyN7ZnJQPNYAVPpwy0slDwqb,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-501,T,shlee@coocon.co.kr,u9695p816sFxwjX0q7BU1OaSDeLPoc,"20210315","20211231",Y,all00@kt.com,2021-03-18 13:52:21,all00@kt.com,2021-03-18 13:52:21
+op-501,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-501,,lts@valueupsys.com,vGR6OcmsWQZAyqt3g72hfh2PM4yofN,"20210513","20230322",Y,,2023-03-22 10:58:47,,
+op-501,T,oasisbusiness@bigsight.com,SXAohm5tuLJkCJCBfsDl39aj1is4ud,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-501,T,bdiptest,testtesttest123,"20210609","20240430",Y,all00@kt.com,2021-09-07 15:53:29,all00@kt.com,2021-09-07 15:53:29
+op-501,T,yanolja01@bigsight.com,oM5mqPc4cEQ3js4xvnecM8mLnOcFE8,"20200624","20220320",Y,all00@kt.com,2020-06-25 10:22:29,all00@kt.com,2020-06-25 10:22:29
+op-501,T,gooding@mail.jongno.go.kr,Yw1VIIWcKkgPnPfbyISfyNJe3IloAY,"20210609","20210626",Y,all00@kt.com,2021-06-10 14:42:31,all00@kt.com,2021-06-10 14:42:31
+op-501,T,zeros@srpost.co.kr,RSllMiKzc0DWymk1ZQJWULmM7FXNEz,"20210315","20210613",Y,all00@kt.com,2021-05-31 09:25:22,all00@kt.com,2021-05-31 09:25:22
+op-502,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-502,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:03,,
+op-502,T,oasisbusiness@bigsight.com,DmVZmjIyN7ZnJQPNYAVPpwy0slDwqb,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-502,T,well9607@naver.com,RfbOPyI1USktdlMGmk5uEn7OS4qEXD,"20190901","20201031",Y,all00@kt.com,2019-10-23 13:43:48,all00@kt.com,2019-10-23 13:43:48
+op-502,T,zeros@srpost.co.kr,RSllMiKzc0DWymk1ZQJWULmM7FXNEz,"20210315","20210613",Y,all00@kt.com,2021-05-31 09:25:22,all00@kt.com,2021-05-31 09:25:22
+op-502,T,oasisbusiness@bigsight.com,SXAohm5tuLJkCJCBfsDl39aj1is4ud,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-502,T,shlee@coocon.co.kr,u9695p816sFxwjX0q7BU1OaSDeLPoc,"20210315","20211231",Y,all00@kt.com,2021-03-18 13:52:21,all00@kt.com,2021-03-18 13:52:21
+op-502,T,"4005sjp@naver.com",smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20221231",Y,all00@kt.com,2020-06-25 10:16:42,all00@kt.com,2020-06-25 10:16:42
+op-502,,lts@valueupsys.com,vGR6OcmsWQZAyqt3g72hfh2PM4yofN,"20210513","20230322",Y,,2023-03-22 10:58:47,,
+op-502,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2020-08-10 17:21:35,all00@kt.com,2020-08-10 17:21:35
+op-502,T,gooding@mail.jongno.go.kr,Yw1VIIWcKkgPnPfbyISfyNJe3IloAY,"20210609","20210626",Y,all00@kt.com,2021-06-10 14:42:31,all00@kt.com,2021-06-10 14:42:31
+op-502,T,changupin@bigsight.com,tPwLtuiyRCgcFT9k6Nl9gosIpOwi9s,"20210103","20220531",Y,all00@kt.com,2021-01-04 10:06:48,all00@kt.com,2021-01-04 10:06:48
+op-502,T,onShop@kt.com,kijkqOFy0zbn9da7g5NyzmaoWdrTIw,"20190901","20201031",Y,all00@kt.com,2019-09-16 15:25:58,all00@kt.com,2019-09-16 15:25:58
+op-502,T,yanolja01@bigsight.com,oM5mqPc4cEQ3js4xvnecM8mLnOcFE8,"20200623","20220320",Y,all00@kt.com,2020-06-25 10:22:29,all00@kt.com,2020-06-25 10:22:29
+op-503,T,shlee@coocon.co.kr,u9695p816sFxwjX0q7BU1OaSDeLPoc,"20210315","20211231",Y,all00@kt.com,2021-03-18 13:52:21,all00@kt.com,2021-03-18 13:52:21
+op-503,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:03,,
+op-503,T,changupin@bigsight.com,tPwLtuiyRCgcFT9k6Nl9gosIpOwi9s,"20210103","20220531",Y,all00@kt.com,2021-01-04 10:06:48,all00@kt.com,2021-01-04 10:06:48
+op-503,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2020-08-10 17:21:35,all00@kt.com,2020-08-10 17:21:35
+op-503,T,"4005sjp@naver.com",smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20221231",Y,all00@kt.com,2020-06-25 10:16:42,all00@kt.com,2020-06-25 10:16:42
+op-503,T,gooding@mail.jongno.go.kr,Yw1VIIWcKkgPnPfbyISfyNJe3IloAY,"20210609","20210626",Y,all00@kt.com,2021-06-10 14:42:31,all00@kt.com,2021-06-10 14:42:31
+op-503,T,well9607@naver.com,RfbOPyI1USktdlMGmk5uEn7OS4qEXD,"20190901","20201031",Y,all00@kt.com,2019-10-23 13:43:48,all00@kt.com,2019-10-23 13:43:48
+op-503,T,yanolja01@bigsight.com,oM5mqPc4cEQ3js4xvnecM8mLnOcFE8,"20200624","20220320",Y,all00@kt.com,2020-06-25 10:22:29,all00@kt.com,2020-06-25 10:22:29
+op-503,T,zeros@srpost.co.kr,RSllMiKzc0DWymk1ZQJWULmM7FXNEz,"20210315","20210613",Y,all00@kt.com,2021-05-31 09:26:18,all00@kt.com,2021-05-31 09:26:18
+op-503,,lts@valueupsys.com,vGR6OcmsWQZAyqt3g72hfh2PM4yofN,"20210513","20230322",Y,,2023-03-22 10:58:47,,
+op-503,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-503,T,oasisbusiness@bigsight.com,DmVZmjIyN7ZnJQPNYAVPpwy0slDwqb,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-503,T,oasisbusiness@bigsight.com,SXAohm5tuLJkCJCBfsDl39aj1is4ud,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-503,T,onShop@kt.com,kijkqOFy0zbn9da7g5NyzmaoWdrTIw,"20190901","20201031",Y,all00@kt.com,2019-09-16 15:25:58,all00@kt.com,2019-09-16 15:25:58
+op-504,T,changupin@bigsight.com,tPwLtuiyRCgcFT9k6Nl9gosIpOwi9s,"20210103","20220531",Y,all00@kt.com,2021-01-04 10:06:48,all00@kt.com,2021-01-04 10:06:48
+op-504,T,zeros@srpost.co.kr,RSllMiKzc0DWymk1ZQJWULmM7FXNEz,"20210315","20210613",Y,all00@kt.com,2021-05-31 09:25:22,all00@kt.com,2021-05-31 09:25:22
+op-504,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2020-08-10 17:21:35,all00@kt.com,2020-08-10 17:21:35
+op-504,T,"4005sjp@naver.com",smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20221231",Y,all00@kt.com,2020-06-25 10:16:42,all00@kt.com,2020-06-25 10:16:42
+op-504,T,oasisbusiness@bigsight.com,DmVZmjIyN7ZnJQPNYAVPpwy0slDwqb,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-504,T,gooding@mail.jongno.go.kr,Yw1VIIWcKkgPnPfbyISfyNJe3IloAY,"20210609","20210626",Y,all00@kt.com,2021-06-10 14:42:31,all00@kt.com,2021-06-10 14:42:31
+op-504,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-504,T,shlee@coocon.co.kr,u9695p816sFxwjX0q7BU1OaSDeLPoc,"20210315","20211231",Y,all00@kt.com,2021-03-18 13:52:21,all00@kt.com,2021-03-18 13:52:21
+op-504,,lts@valueupsys.com,vGR6OcmsWQZAyqt3g72hfh2PM4yofN,"20210513","20230322",Y,,2023-03-22 10:58:47,,
+op-504,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:03,,
+op-504,T,oasisbusiness@bigsight.com,SXAohm5tuLJkCJCBfsDl39aj1is4ud,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-504,T,well9607@naver.com,RfbOPyI1USktdlMGmk5uEn7OS4qEXD,"20190901","20201031",Y,all00@kt.com,2019-10-23 13:43:48,all00@kt.com,2019-10-23 13:43:48
+op-504,T,onShop@kt.com,kijkqOFy0zbn9da7g5NyzmaoWdrTIw,"20190901","20201031",Y,all00@kt.com,2019-09-16 15:25:58,all00@kt.com,2019-09-16 15:25:58
+op-504,T,yanolja01@bigsight.com,oM5mqPc4cEQ3js4xvnecM8mLnOcFE8,"20200624","20220320",Y,all00@kt.com,2020-06-25 10:22:29,all00@kt.com,2020-06-25 10:22:29
+op-505,T,zeros@srpost.co.kr,RSllMiKzc0DWymk1ZQJWULmM7FXNEz,"20210315","20210613",Y,all00@kt.com,2021-05-31 09:25:22,all00@kt.com,2021-05-31 09:25:22
+op-505,T,well9607@naver.com,RfbOPyI1USktdlMGmk5uEn7OS4qEXD,"20190901","20201031",Y,all00@kt.com,2019-10-23 13:43:48,all00@kt.com,2019-10-23 13:43:48
+op-505,T,oasisbusiness@bigsight.com,DmVZmjIyN7ZnJQPNYAVPpwy0slDwqb,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-505,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2020-08-10 17:21:35,all00@kt.com,2020-08-10 17:21:35
+op-505,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:03,,
+op-505,T,gooding@mail.jongno.go.kr,Yw1VIIWcKkgPnPfbyISfyNJe3IloAY,"20210609","20210626",Y,all00@kt.com,2021-06-10 14:42:31,all00@kt.com,2021-06-10 14:42:31
+op-505,T,oasisbusiness@bigsight.com,SXAohm5tuLJkCJCBfsDl39aj1is4ud,"20200721","20220201",Y,all00@kt.com,2020-07-28 14:39:20,all00@kt.com,2020-07-28 14:39:20
+op-505,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-505,,lts@valueupsys.com,vGR6OcmsWQZAyqt3g72hfh2PM4yofN,"20210513","20230322",Y,,2023-03-22 10:58:47,,
+op-505,T,onShop@kt.com,kijkqOFy0zbn9da7g5NyzmaoWdrTIw,"20190901","20201031",Y,all00@kt.com,2019-09-16 15:25:58,all00@kt.com,2019-09-16 15:25:58
+op-506,,lts@valueupsys.com,vGR6OcmsWQZAyqt3g72hfh2PM4yofN,"20210513","20230322",Y,,2023-03-22 10:58:47,,
+op-506,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:03,,
+op-506,T,"4005sjp@naver.com",smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20221231",Y,all00@kt.com,2020-06-25 10:16:42,all00@kt.com,2020-06-25 10:16:42
+op-506,T,zeros@srpost.co.kr,RSllMiKzc0DWymk1ZQJWULmM7FXNEz,"20210315","20210613",Y,all00@kt.com,2021-05-31 09:25:22,all00@kt.com,2021-05-31 09:25:22
+op-506,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2021-03-08 13:54:36,all00@kt.com,2021-03-08 13:54:36
+op-506,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-506,T,shlee@coocon.co.kr,u9695p816sFxwjX0q7BU1OaSDeLPoc,"20210315","20211231",Y,all00@kt.com,2021-03-18 13:52:21,all00@kt.com,2021-03-18 13:52:21
+op-506,T,gooding@mail.jongno.go.kr,Yw1VIIWcKkgPnPfbyISfyNJe3IloAY,"20210609","20210626",Y,all00@kt.com,2021-06-10 14:42:31,all00@kt.com,2021-06-10 14:42:31
+op-506,T,changupin@bigsight.com,tPwLtuiyRCgcFT9k6Nl9gosIpOwi9s,"20210103","20220531",Y,all00@kt.com,2021-01-04 10:06:48,all00@kt.com,2021-01-04 10:06:48
+op-507,T,zeros@srpost.co.kr,RSllMiKzc0DWymk1ZQJWULmM7FXNEz,"20210315","20210613",Y,all00@kt.com,2021-05-31 09:25:22,all00@kt.com,2021-05-31 09:25:22
+op-507,T,gooding@mail.jongno.go.kr,Yw1VIIWcKkgPnPfbyISfyNJe3IloAY,"20210609","20210626",Y,all00@kt.com,2021-06-10 14:42:31,all00@kt.com,2021-06-10 14:42:31
+op-507,T,shlee@coocon.co.kr,u9695p816sFxwjX0q7BU1OaSDeLPoc,"20210315","20211231",Y,all00@kt.com,2021-03-18 13:52:21,all00@kt.com,2021-03-18 13:52:21
+op-507,T,changupin@bigsight.com,tPwLtuiyRCgcFT9k6Nl9gosIpOwi9s,"20210103","20220531",Y,all00@kt.com,2021-01-04 10:06:48,all00@kt.com,2021-01-04 10:06:48
+op-507,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-507,T,"4005sjp@naver.com",smRXc8eNMbFt5Tc9J0owLIb3okZLQm,"20200624","20221231",Y,all00@kt.com,2020-06-25 10:16:42,all00@kt.com,2020-06-25 10:16:42
+op-507,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:03,,
+op-507,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2021-02-10 13:44:47,all00@kt.com,2021-02-10 13:44:47
+op-507,,lts@valueupsys.com,vGR6OcmsWQZAyqt3g72hfh2PM4yofN,"20210513","20230322",Y,,2023-03-22 10:58:47,,
+op-508,T,all00@kt.com,,,,Y,all00@kt.com,2021-11-10 13:00:00,,
+op-508,T,bizrecipe@bigsight.com,GbKIUiAENtLzEi8AH6noCkDyqwhJUz,"20200801","20231231",Y,all00@kt.com,2021-02-10 13:44:47,all00@kt.com,2021-02-10 13:44:47
+op-508,T,"91285346@ktfriend.com","8qI5NMFSGewOTdIWQbf9zlJhLZDALP","20211229","20221231",Y,"91285346@kt.com",2021-12-29 16:47:03,,
+op-601,_,isyang@kt.com,ANprgVZF4ugb2VPFIxxQ,"20210315","20230308",N,alp01@kt.com,2021-03-16 09:55:25,,
+op-602,_,isyang@kt.com,ANprgVZF4ugb2VPFIxxQ,"20210316","20230308",N,alp01@kt.com,2021-03-16 09:55:25,,
+op-603,_,isyang@kt.com,ANprgVZF4ugb2VPFIxxQ,"20210316","20230308",N,alp01@kt.com,2021-03-16 09:55:25,,
+op-604,_,isyang@kt.com,ANprgVZF4ugb2VPFIxxQ,"20210316","20230308",N,alp01@kt.com,2021-03-16 09:55:25,,
+op-605,_,isyang@kt.com,ANprgVZF4ugb2VPFIxxQ,"20210316","20230308",N,alp01@kt.com,2021-03-16 09:55:25,,
+op-606,_,isyang@kt.com,ANprgVZF4ugb2VPFIxxQ,"20210316","20230308",N,alp01@kt.com,2021-03-16 09:55:25,,
+op-607,_,isyang@kt.com,ANprgVZF4ugb2VPFIxxQ,"20210316","20230308",N,alp01@kt.com,2021-03-16 09:55:25,,
+op-701,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-701,D,test004@kt.com,V6jHy44J4ShDEzt5W4GBuTTvKpcHz4,"20211004","20211007",Y,all05@kt.com,2021-10-05 13:29:40,test2@kt.com,2021-10-07 18:09:11
+op-701,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-701,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-701,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-702,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-702,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-702,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-703,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-703,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-703,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-703,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-704,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-704,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-704,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-704,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-705,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-705,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-705,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-705,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-706,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-706,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-706,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-706,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-708,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-708,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-708,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-708,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-709,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-709,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-709,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-709,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-710,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-710,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-710,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:38,,
+op-710,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-711,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-711,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-711,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-711,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-712,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-712,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-712,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-712,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-713,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-713,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-713,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-713,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-714,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-714,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-714,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-714,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-715,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-715,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-715,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-715,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-716,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-716,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-716,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-716,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-720,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-720,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-720,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-720,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-721,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-721,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-721,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-721,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-722,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-722,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-722,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-722,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-723,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-723,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-723,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-723,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-724,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-724,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-724,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-724,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-725,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-725,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-725,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-725,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-726,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-726,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-726,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-726,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-727,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-727,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-727,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:42,,
+op-727,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:48,,
+op-728,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-728,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-728,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-728,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-729,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-729,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-729,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-729,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-730,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-730,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-730,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-730,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-731,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-731,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-731,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-731,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-732,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-732,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-732,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-732,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-733,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-733,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-733,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-733,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-734,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-734,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-734,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-734,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-735,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-735,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-735,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-735,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-736,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-736,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-736,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-736,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-737,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-737,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-737,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-737,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-745,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-745,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-745,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-745,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-746,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-746,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-746,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-746,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-747,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-747,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-747,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-747,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-757,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-757,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-757,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-757,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+op-759,,evan.shin@kt.com,z4UpbiqoAyNf2PI8TnIp,"20210908","20301031",Y,,2023-10-26 18:30:43,,
+op-759,D,ydkim@kt.com,UUmttxQELIS0wSz5UqQVTdwaanlarz,"20210901","20211007",Y,,2021-10-07 18:10:49,,
+op-759,D,van@postmedia.co.kr,YyV4cgiUCxM41LmW3nbPCsbRQ10TD0,"20220517","20231231",Y,kim.minsun@kt.com,2022-05-17 16:53:31,kim.minsun@kt.com,2022-05-17 16:54:48
+op-759,D,eomjoo0@kt.com,kjfcyVhdHFt21OBdcvPvk00MipIIxV,"20210901","20211031",Y,,2021-09-30 18:39:39,,
+tour-001,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-001,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:07,,
+tour-001,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:48,test2@kt.com,2021-10-05 13:14:35
+tour-002,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:48,test2@kt.com,2021-10-05 13:14:35
+tour-002,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:07,,
+tour-002,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-003,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:48,test2@kt.com,2021-10-05 13:14:35
+tour-003,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-003,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:07,,
+tour-004,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-004,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-004,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:48,test2@kt.com,2021-10-05 13:14:35
+tour-005,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-005,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-005,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:48,test2@kt.com,2021-10-05 13:14:35
+tour-006,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-006,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-006,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-007,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-007,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-007,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-008,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-008,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-008,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-009,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-009,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-009,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-010,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-010,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-010,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-011,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-011,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-011,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-012,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-012,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-012,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-013,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-013,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-013,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-014,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-014,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-015,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20210925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-015,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-015,S,junho.choi@bigsight.com,"3xUJKsY0V0kmCNXzKB05rbdeW7nL7s","20211020","20211020",Y,,2021-10-21 14:38:53,,
+tour-016,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20250925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-016,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-017,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
+tour-017,S,DDD@kt.com,CpvcBXq1k2S1133NZZnaIX3pPHeU3E,"20210907","20250925",Y,,2021-09-08 13:30:49,test2@kt.com,2021-10-05 13:14:35
+tour-018,,ganghwa@bigsight.com,DwbnqRVbSjmyzUF0PcxNhVll6CiRpB,"20211020","20250228",Y,,2025-01-20 13:41:08,,
