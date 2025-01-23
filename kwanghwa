@@ -1,0 +1,46 @@
+import urllib
+import urllib2
+import json
+
+# URL과 인증 키
+url = "https://api.example.com/endpoint"
+auth_key = "your-authentication-key"
+
+# 요청 헤더
+headers = {
+    "Authorization": "Bearer %s" % auth_key,  # 인증 키 추가
+    "Content-Type": "application/json",  # JSON 데이터로 설정
+    "User-Agent": "Python-urllib/2.6"  # User-Agent 추가
+}
+
+# 바디 파라미터
+data = {
+    "param1": "value1",
+    "param2": "value2"
+}
+
+# 바디 데이터를 JSON 형식으로 인코딩
+data_encoded = json.dumps(data)
+
+# 요청 객체 생성
+request = urllib2.Request(url, data=data_encoded, headers=headers)
+
+try:
+    # API 호출
+    response = urllib2.urlopen(request)
+    # 응답 읽기
+    response_data = response.read()
+
+    # 디코딩 및 출력
+    try:
+        # JSON으로 디코딩 시도
+        response_json = json.loads(response_data)
+        print("Response (JSON):", json.dumps(response_json, indent=4))
+    except ValueError:
+        # JSON이 아니면 원본 그대로 출력
+        print("Response (Raw):", response_data)
+
+except urllib2.HTTPError as e:
+    print("HTTPError:", e.code, e.read())
+except urllib2.URLError as e:
+    print("URLError:", e.reason)
