@@ -1,46 +1,204 @@
-import urllib
+#-*- coding:utf-8 -*-
+# encoding: utf-8
 import urllib2
 import json
+import sys
+import os.path
+import time
+import logging
+import urllib
+#import db_info_gpdb
+#import class_group
 
-# URL과 인증 키
-url = "https://api.example.com/endpoint"
-auth_key = "your-authentication-key"
+reload(sys)
+sys.setdefaultencoding('utf8')
 
-# 요청 헤더
-headers = {
-    "Authorization": "Bearer %s" % auth_key,  # 인증 키 추가
+APIHOST_1='https://api.bigsight.kt.com/tour/api/v1/openapi/'
+APIHOST='https://api.bigsight.kt.com/tour/api/v1/openapi/tour-013'
+APIKEY='DwbnqRVbSjmyzUF0PcxNhVll6CiRpB'
+
+#req_header={"Authorization": f"Bearer {APIKEY}", "Content-Type":"application/json"}
+#req_header={"Authorization": "Bearer %s" % APIKEY, "Content-Type":"application/json"}
+#req_header={"Authorization": "bearer DwbnqRVbSjmyzUF0PcxNhVll6CiRpB", "Content-Type":"application/json","User-Agent":"Python-urllib/2.6"}
+req_header= {
+    "servicekey": "%s" % APIKEY,  # 인증 키 추가
     "Content-Type": "application/json",  # JSON 데이터로 설정
     "User-Agent": "Python-urllib/2.6"  # User-Agent 추가
 }
+req_date={}
 
-# 바디 파라미터
-data = {
-    "param1": "value1",
-    "param2": "value2"
-}
+#http://14.63.149.197/?MobileOS=ETC&MobileApp=AppTesting&_type=json&defaultYN=Y&overviewYN=Y&contentId=2381406 
 
-# 바디 데이터를 JSON 형식으로 인코딩
-data_encoded = json.dumps(data)
+data={}
+now=time.localtime()
+nowYMD = str(now.tm_year).zfill(4) + str(now.tm_mon).zfill(2) + str(now.tm_mday).zfill(2)
 
-# 요청 객체 생성
-request = urllib2.Request(url, data=data_encoded, headers=headers)
+logging.basicConfig(filename= os.path.dirname(os.path.abspath(sys.argv[0]))+'/log/'+os.path.splitext(sys.argv[0])[0] + '_'+ nowYMD + '.log', level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s')
 
-try:
-    # API 호출
-    response = urllib2.urlopen(request)
-    # 응답 읽기
-    response_data = response.read()
+#API호출해서,  응답하는 함수
+def GeoAPIRequest(path, query, method, debug, data={}):
+    url = path
+    #data={"baseYmd":"20241231", "rgnCd":"28710250"}
+    if debug == 1:
+        print('HTTP Method: %s' %method)
+        print('Request URL: %s' %url)
+        print('QueryString: %s' %query)
+        print('Data       : %s' %str(data))
 
-    # 디코딩 및 출력
-    try:
-        # JSON으로 디코딩 시도
-        response_json = json.loads(response_data)
-        print("Response (JSON):", json.dumps(response_json, indent=4))
-    except ValueError:
-        # JSON이 아니면 원본 그대로 출력
-        print("Response (Raw):", response_data)
+    if 'GET' == method:
+        req = urllib2.Request(url)
+    elif 'POST' == method:
+        jsondump = json.dumps(data)
+        req = urllib2.Request(url, data=jsondump, headers=req_header)
+        #req = urllib2.Request(url, data=data, headers=req_header)
+    retry_cnt = 5
+    #req.add_header('Authorization', APIKEY)
+    for cnt in range(retry_cnt):
+        try:
+            if 'GET' == method:
+                result = urllib2.urlopen(req)
+            else:
+                jsondump = json.dumps(data)
+                #result = urllib2.urlopen(req, jsondump)
+                result = urllib2.urlopen(req)
+            return result
+        except Exception as R:
+            #raise e
+            logging.debug("in retry(), {func.__name__}() raised ")
+            print u"예외: ",
+            print R
+            pass
+        time.sleep(3)
+    #logging.debug("{func.__name__}() finally has been failed")
+    print "finally has been failed"
 
-except urllib2.HTTPError as e:
-    print("HTTPError:", e.code, e.read())
-except urllib2.URLError as e:
-    print("URLError:", e.reason)
+def GeoAPIRequesttst(path, query, method, debug, data={}):
+    url = APIHOST + path
+    if debug == 1:
+        print('HTTP Method: %s' %method)
+        print('Request URL: %s' %url)
+        print('QueryString: %s' %query)
+        print('Data       : %s' %str(data))
+
+    if 'GET' == method:
+        req = urllib2.Request(url)
+    elif 'POST' == method:
+        req = urllib2.Request(url, data)
+
+    #req.add_header('Authorization', APIKEY)
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(url):
+            for cnt in range(retry_cnt):
+                try:
+                    result = urllib2.urlopen(req)
+                    return result
+                except Exception as R:
+                    #raise e
+                    logging.debug("in retry(), {func.__name__}() raised ")
+                    print u"예외: ",
+                    print R
+                    pass
+                time.sleep(60)
+            #logging.debug("{func.__name__}() finally has been failed")
+            print "finally has been failed"
+        return wrapper
+    return decorator
+
+def api_menu_11():
+    APIHOST=APIHOST_1+'tour-011'
+    in_baseym = raw_input("base_ym YYYYMM 포맷으로 입력(예 202412) : ")
+    in_rgncd = raw_input("행정동코드8자리를 입력(예 28710250) : ")
+    req_data={"baseYm": "%s" %in_baseym,  "rgnCd":"%s" %in_rgncd}
+    call_api_areacode(APIHOST, req_data)
+def api_menu_12():
+    APIHOST=APIHOST_1+'tour-012'
+    in_baseyweek = raw_input("주차 base_yweek YYYYWK 포맷으로 입력(예 202452) : ")
+    in_sggcd = raw_input("시군구코드5자리를 입력(예 28710) : ")
+    req_data={"baseYweek": "%s" %in_baseyweek,  "sggCd":"%s" %in_sggcd}
+    call_api_areacode(APIHOST, req_data)
+def api_menu_13():
+    APIHOST=APIHOST_1+'tour-013'
+    in_baseymd = raw_input("base_ymd YYYYMMDD 포맷으로 입력(예 20241231) : ")
+    in_rgncd = raw_input("행정동코드8자리를 입력(예 28710250) : ")
+    req_data={"baseYmd": "%s" %in_baseymd,  "rgnCd":"%s" %in_rgncd}
+    call_api_areacode(APIHOST, req_data)
+def api_menu_18():
+    APIHOST=APIHOST_1+'tour-018'
+    in_baseym = raw_input("base_ym YYYYMM 포맷으로 입력(예 202412) : ")
+    in_sitsid = raw_input("관광지아이디를 입력(예 1039977) : ")
+    req_data={"baseYm": "%s" %in_baseym,  "sitsId":"%s" %in_sitsid}
+    call_api_areacode(APIHOST, req_data)
+def display_menu():
+    print(u"####################################################################")
+    print(u"다음중 API 메뉴를 선택하세요\n")
+    print(u"11. 강화군-tour-011 (관광객분석_월집계)")
+    print(u"12. 강화군-tour-012 (관광지요약_주집계)")
+    print(u"13. 강화군-tour-013 (관광객분석_유입유출입집계)")
+    print(u"18. 강화군-tour-018 (관광지분석_내국인성연령시간대별월집계)")
+    print(u"\n 0. 종료")
+def call_api_areacode(APIHOST, req_data):
+    #conn=db_info_gpdb.dbconnect()
+    #intro_clss = class_group.Tour_Item_Intro()
+    #res_intro=GeoAPIRequest(URLlist_intropath+'ServiceKey='+APIKEY+'&contentId='+str(item['contentid'])+'&contentTypeId='+str(item['contenttypeid'])+endparameter1, '', 'GET', 1)
+    #res_intro=GeoAPIRequest(URLlist_areacode+'ServiceKey='+APIKEY+endparameter1, '', 'GET', 1)
+    #req_data={"ServiceKey":"'+APIKEY+'","baseYmd":"20241231", "rgnCd":"28710250"}
+    #req_data={"baseYmd":"20241231", "rgnCd":"28710250"}
+    #req_data=urllib.urlencode(req_data)
+    #res_intro=GeoAPIRequest('?ServiceKey='+APIKEY, '', 'POST', 1, req_data)
+    res_intro=GeoAPIRequest( APIHOST, '', 'POST', 1, req_data)
+    if res_intro:
+        print "type of res_intro:", type(res_intro) # <type 'instance'>
+        intro_data=json.loads(res_intro.read())
+        #print('Data       : %s' %json.dumps(intro_data, indent=2, ensure_ascii=False).encode('utf-8'))
+        print("response status  : %d" %res_intro.getcode())
+        #print("response info    : %s" %res_intro.info())
+        print("response data_cnt: %s" %res_intro.info().get("data_cnt",None))
+        print('responseCode     : %s' %json.dumps(intro_data['responseCode'],  ensure_ascii=False).encode('utf-8'))
+        if intro_data['responseCode'] == 'OK':
+            intro_item=intro_data['data']
+            json_val=json.dumps(intro_item, ensure_ascii=False).encode('utf-8')
+            if isinstance(intro_item, list):
+                print("json is list")
+                #for intro_json in intro_item:
+                #    print(json.dumps(intro_json, ensure_ascii=False).encode('utf-8'))
+                for idx, intro_json in enumerate(intro_item, start=1):
+                    print("%d : %s" %(idx,json.dumps(intro_json, ensure_ascii=False).encode('utf-8')))
+            else:
+                print(json_val)
+        #totalcount=intro_data['data']['body']['totalCount']
+        #if totalcount > 0:
+        #intro_str=json.dumps(intro_item, indent=2, ensure_ascii=False).encode('utf-8')
+        #print(intro_str)
+
+def main():
+    #if len(sys.argv) <> 3:
+    #    print("파라메터를 입력해야 합니다. 예)%s content_id(2300942) contenttype_id(12)" %sys.argv[0])
+    #    sys.exit(1)
+
+    #contentid=sys.argv[1]
+    #contenttypeid=sys.argv[2]
+    #print('contentid = '+str(contentid)+ u' 조회')
+    #call_apis(contentid, contenttypeid)
+    #call_api_areacode()
+        #res_intro=GeoAPIRequest(URLlist_intropath+'ServiceKey='+APIKEY+'&contentId='+str(item['contentid'])+'&contentTypeId='+str(item['contenttypeid'])+endparameter1, '', 'GET', 1)
+    while True:
+        display_menu()
+        try:
+            choice=int(raw_input("메뉴를 선택하세요 : "))
+            if choice == 0:
+                print(u"종료합니다. 잘가요")
+                break
+            elif 1 <= choice <= 20:
+                globals()["api_menu_%d" %choice]()
+            else:
+                print(u"선택을 잘못했습니다.")
+        except ValueError:
+            print(u"입력을 잘못했습니다.숫자를 입력하세요")
+        except KeyError:
+            print(u"메뉴가 아직 구성되지 않았습니다")
+
+if __name__ == '__main__':
+    #main(sys.argv)
+    main()
+
