@@ -1,0 +1,102 @@
+import pandas as pd
+from sqlalchemy import create_engine
+
+# Grafana 데이터 소스와 동일한 DB 설정 사용
+DB_TYPE = "postgresql"  # MySQL이면 "mysql+pymysql"
+DB_HOST = "db.example.com"
+DB_PORT = "5432"
+DB_NAME = "grafana_db"
+DB_USER = "grafana_user"
+DB_PASS = "your_password"
+
+# SQLAlchemy 엔진 생성
+engine = create_engine(f"{DB_TYPE}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+
+# SQL 실행
+query = "SELECT * FROM your_table LIMIT 10"
+df = pd.read_sql(query, engine)
+
+print(df)  # 결과 출력
+---------------------------------------------------
+아래 코드는 Grafana Query API를 활용하여 데이터를 JSON으로 가져오는 방법입니다.
+import requests
+import pandas as pd
+
+# Grafana API 설정
+GRAFANA_URL = "http://your-grafana-url/api/datasources/proxy/1/query"
+API_KEY = "Bearer xxxxxxxx"
+
+# Prometheus 또는 SQL 데이터 쿼리 요청
+query = {
+    "queries": [
+        {
+            "refId": "A",
+            "datasourceId": 1,
+            "rawSql": "SELECT time, value FROM metrics WHERE time > now() - interval '1 day'",
+            "format": "table"
+        }
+    ]
+}
+
+# 요청 헤더 설정
+headers = {
+    "Authorization": API_KEY,
+    "Content-Type": "application/json"
+}
+
+# 요청 보내기
+response = requests.post(GRAFANA_URL, json=query, headers=headers)
+data = response.json()
+
+# 결과 DataFrame 변환
+df = pd.DataFrame(data["results"]["A"]["frames"][0]["data"]["values"], columns=["time", "value"])
+print(df)
+
+
+위에서 가져온 데이터를 Excel 보고서(.xlsx)로 변환하는 코드입니다.
+
+python
+복사
+편집
+from openpyxl import Workbook
+
+# Excel 저장
+file_name = "grafana_report.xlsx"
+df.to_excel(file_name, index=False)
+
+print(f"📊 Excel Report Saved: {file_name}")
+
+✅ 3. Excel 포맷 개선 (스타일 추가)
+위 코드는 기본 엑셀을 저장하지만, 좀 더 깔끔한 스타일을 추가할 수도 있습니다.
+
+python
+복사
+편집
+from openpyxl import load_workbook
+from openpyxl.styles import Font, Alignment
+
+# 엑셀 파일 로드
+wb = load_workbook(file_name)
+ws = wb.active
+
+# 헤더 스타일 적용
+for col in ws.iter_cols(min_row=1, max_row=1):
+    for cell in col:
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.alignment = Alignment(horizontal="center")
+        cell.fill = openpyxl.styles.PatternFill("solid", fgColor="4F81BD")  # 파란색 배경
+
+# 열 너비 자동 조정
+for col in ws.columns:
+    max_length = 0
+    col_letter = col[0].column_letter
+    for cell in col:
+        try:
+            max_length = max(max_length, len(str(cell.value)))
+        except:
+            pass
+    ws.column_dimensions[col_letter].width = max_length + 2
+
+# 엑셀 저장
+wb.save(file_name)
+print(f"🎨 Styled Excel Report Saved: {file_name}")
