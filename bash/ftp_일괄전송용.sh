@@ -309,3 +309,14 @@ bash
 echo "${SELECTED_PAIRS[@]}"
 # 출력 예시:
 # file2.csv file2.fin file1.csv file1.fin
+
+/usr/bin/expect <<EOF >> ${SFTPLOGFILE}
+set timeout 14400
+spawn sftp -oPort=${KEPCOPort} ${KEPCOUser}@${KEPCOHostAddr}
+expect "s password: " { send ${KEPCOPwd}\r" }
+expect "sftp> " { send "cd ${KEPCODir} \r" }
+expect "sftp> " { send "put ${sendFileName} \r" }
+expect "sftp> " { send "quit \r" }
+interact
+EOF
+
