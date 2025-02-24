@@ -320,3 +320,116 @@ expect "sftp> " { send "quit \r" }
 interact
 EOF
 
+-------------------------------------------------------------------------------------------
+sftp 접속횟수를 최대한 줄이기 위해서, SELECTED_PAIRS 를 대상으로 전송을 전부 수행하고,
+로그를 뒤져서 다시 오류난것만 추려서, 다시 일괄로 전송하고,, 이렇게 수정해줘
+⚡ 수정할 주요 변경점:
+✅ SFTP 한 번의 접속으로 SELECTED_PAIRS의 모든 파일을 전송
+📋 전송 로그를 분석해 실패한 파일을 추출
+🔄 실패한 파일들만 재전송 (역시 한 번의 SFTP 접속으로)
+🏁 최대 N번까지 일괄 재전송 반복
+
+#!/bin/bash
+
+# === 💾 설정 ===
+SFTP_USER="your_user"
+SFTP_HOST="your_host"
+REMOTE_DIR="/remote/path"
+SUCCESS_LOG="sftp_success.log"
+FAILURE_LOG="sftp_failure.log"
+RETRY_COUNT=3  # 최대 재시도 횟수
+
+# === 🔄 임시 파일 ===
+SFTP_CMD_FILE=$(mktemp)
+SFTP_LOG_FILE=$(mktemp)
+
+# === ✅ 초기화 ===
+> "$SUCCESS_LOG"
+> "$FAILURE_LOG"
+
+# === 📁 샘플 SELECTED_PAIRS 배열 ===
+# 실제 선택된 파일 리스트로 변경하세요!
+SELECTED_PAIRS=("file1.csv" "file1.fin" "file2.csv" "file2.fin" "file3.csv" "file3.fin")
+
+# === 🔄 함수: SFTP 전송 ===
+function sftp_transfer {
+  local FILE_LIST=("$@")
+  
+  # 📋 SFTP 명령어 생성
+  > "$SFTP_CMD_FILE"
+  for FILE in "${FILE_LIST[@]}"; do
+    echo "put \"$FILE\" \"$REMOTE_DIR/$(basename "$FILE")\"" >> "$SFTP_CMD_FILE"
+  done
+
+  # 📡 SFTP 실행 (일괄 전송)
+  echo "🚀 SFTP 전송 시작 (${#FILE_LIST[@]}개 파일)"
+  sftp -b "$SFTP_CMD_FILE" "$SFTP_USER@$SFTP_HOST" > "$SFTP_LOG_FILE" 2>&1
+}
+
+# === 🔍 함수: 전송 결과 분석 ===
+function parse_sftp_log {
+  local SUCCESS_FILES=()
+  local FAILED_FILES=()
+
+  while IFS= read -r line; do
+    if [[ "$line" == *"Uploading"* ]]; then
+      FILE=$(echo "$line" | awk '{print $2}')
+      SUCCESS_FILES+=("$FILE")
+    elif echo "$line" | grep -E "Couldn't|Permission denied|Failure" > /dev/null; then
+      FAILED_FILE=$(echo "$line" | grep -oE "/.*$")
+      FAILED_FILES+=("$FAILED_FILE")
+    fi
+  done < "$SFTP_LOG_FILE"
+
+  # ✅ 성공 파일 기록
+  for file in "${SUCCESS_FILES[@]}"; do
+    echo "$file" >> "$SUCCESS_LOG"
+  done
+
+  # ❌ 실패 파일 반환
+  FAILED_FILES_RET=("${FAILED_FILES[@]}")
+}
+
+# === 🔄 전송 및 재시도 루프 ===
+ATTEMPT=1
+FILES_TO_SEND=("${SELECTED_PAIRS[@]}")
+
+while [ $ATTEMPT -le $RETRY_COUNT ] && [ ${#FILES_TO_SEND[@]} -gt 0 ]; do
+  echo "🔄 시도 $ATTEMPT / $RETRY_COUNT"
+
+  # 🚀 SFTP 전송
+  sftp_transfer "${FILES_TO_SEND[@]}"
+
+  # 🔍 전송 결과 분석
+  parse_sftp_log
+
+  # ❌ 실패 파일 목록 업데이트
+  FILES_TO_SEND=("${FAILED_FILES_RET[@]}")
+
+  if [ ${#FILES_TO_SEND[@]} -eq 0 ]; then
+    echo "✅ 모든 파일 전송 성공!"
+    break
+  else
+    echo "❌ 실패 파일 수: ${#FILES_TO_SEND[@]}"
+    if [ $ATTEMPT -lt $RETRY_COUNT ]; then
+      echo "🔄 재시도 준비 중..."
+      sleep 2  # 재시도 전 대기
+    else
+      echo "⚠️ 최대 재시도 도달. 실패 파일 기록."
+      printf "%s\n" "${FILES_TO_SEND[@]}" >> "$FAILURE_LOG"
+    fi
+  fi
+
+  ((ATTEMPT++))
+done
+
+# === 🧹 임시 파일 삭제 ===
+rm -f "$SFTP_CMD_FILE" "$SFTP_LOG_FILE"
+
+# === 📋 결과 요약 ===
+echo "✅ 성공 파일 목록: $SUCCESS_LOG"
+echo "❌ 실패 파일 목록: $FAILURE_LOG"
+
+
+
+
