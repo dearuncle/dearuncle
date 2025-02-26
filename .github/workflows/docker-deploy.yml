@@ -1,0 +1,35 @@
+name: Deploy Docker Container
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 변경이 있을 때 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Docker 로그인
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Docker 이미지 빌드
+        run: docker build -t your-dockerhub-username/your-image-name:latest .
+
+      - name: Docker Hub에 푸시
+        run: docker push your-dockerhub-username/your-image-name:latest
+
+      - name: 원격 서버에서 컨테이너 실행
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull your-dockerhub-username/your-image-name:latest
+            docker stop my-container || true
+            docker rm my-container || true
+            docker run -d --name my-container -p 80:80 your-dockerhub-username/your-image-name:latest
