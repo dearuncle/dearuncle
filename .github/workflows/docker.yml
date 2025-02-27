@@ -1,0 +1,38 @@
+name: Build and Run Docker PostgreSQL
+
+# 이 워크플로우가 실행될 이벤트를 정의
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때 트리거
+  pull_request:
+    branches:
+      - main  # main 브랜치에 풀 리퀘스트가 생성될 때 트리거
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # GitHub Actions에서 제공하는 최신 Ubuntu 환경에서 실행
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # 2. Docker Buildx 설정 (빌드 도구 설정)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # 3. Docker 이미지 빌드
+      - name: Build Docker image
+        run: |
+          docker-compose build
+
+      # 4. Docker 컨테이너 실행
+      - name: Run Docker container
+        run: |
+          docker-compose up -d
+
+      # 5. 실행된 Docker 컨테이너 상태 확인
+      - name: Check Docker container status
+        run: |
+          docker ps
