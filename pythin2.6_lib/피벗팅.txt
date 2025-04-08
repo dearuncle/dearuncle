@@ -1,0 +1,120 @@
+import psycopg2
+import pandas as pd
+from pandas import ExcelWriter
+
+db_config = {
+    'host': 'localhost',
+    'port': 5432,
+    'dbname': 'your_db',
+    'user': 'your_user',
+    'password': 'your_password'
+}
+
+query = """
+SELECT
+    yyyymm AS 년월,
+    gender AS 성별,
+    age_group_code AS 연령대코드,
+    sales_amount AS 매출
+FROM sales_table;
+"""
+
+try:
+    conn = psycopg2.connect(**db_config)
+    df = pd.read_sql_query(query, conn)
+
+    # ✅ 피벗: 매출 합계 + 건수 (index와 columns 둘 다 다중)
+    pivot_df = pd.pivot_table(
+        df,
+        index=['연령대코드', '성별'],
+        columns='년월',
+        values='매출',
+        aggfunc=['sum', 'count'],  # 여러 통계 함수 사용 가능
+        fill_value=0
+    )
+
+    # ✅ 엑셀 저장
+    with ExcelWriter("복합피벗_매출_건수.xlsx", engine='openpyxl') as writer:
+        pivot_df.to_excel(writer, sheet_name='연령x성별x월별')
+
+    print("✅ 매출 합계 + 건수 피벗 결과 저장 완료")
+
+except Exception as e:
+    print("❌ 오류 발생:", e)
+
+finally:
+    if 'conn' in locals():
+        conn.close()
+
+
+
+
+
+✅ 컬럼 이름 평탄화 (선택)
+python
+복사
+편집
+pivot_df.columns = [f"{agg}_{yyyymm}" for agg, yyyymm in pivot_df.columns]
+결과:
+
+| 연령대코드 | 성별 | sum_202401 | sum_202402 | count_202401 | ... |
+
+
+
+
+
+
+import psycopg2
+import pandas as pd
+from pandas import ExcelWriter
+
+db_config = {
+    'host': 'localhost',
+    'port': 5432,
+    'dbname': 'your_db',
+    'user': 'your_user',
+    'password': 'your_password'
+}
+
+query = """
+SELECT
+    yyyymm AS 년월,
+    gender AS 성별,
+    age_group_code AS 연령대코드,
+    sales_amount AS 매출,
+    item_count AS 판매물품수
+FROM sales_table;
+"""
+
+try:
+    conn = psycopg2.connect(**db_config)
+    df = pd.read_sql_query(query, conn)
+
+    # ✅ 서로 다른 집계 함수 적용
+    pivot_df = pd.pivot_table(
+        df,
+        index=['연령대코드', '성별'],
+        columns='년월',
+        values={
+            '매출': 'sum',         # 매출은 합계
+            '판매물품수': 'max'    # 판매물품수는 최댓값
+        },
+        fill_value=0
+    )
+
+    # ✅ 컬럼 이름 평탄화 (선택)
+    pivot_df.columns = [f"{col}_{yyyymm}" for col, yyyymm in pivot_df.columns]
+
+    # ✅ 엑셀 저장
+    with ExcelWriter("매출_판매물품수_피벗.xlsx", engine='openpyxl') as writer:
+        pivot_df.to_excel(writer, sheet_name='복합피벗')
+
+    print("✅ 피벗 결과 저장 완료!")
+
+except Exception as e:
+    print("❌ 오류 발생:", e)
+
+finally:
+    if 'conn' in locals():
+        conn.close()
+
