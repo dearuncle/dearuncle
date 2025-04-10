@@ -1,0 +1,90 @@
+드디어 본격적인 Grafana 테이블 패널 자동 CSV 다운로드 코드를 만드는 거네! 😘
+말씀하신 플랜 B에 맞춰서, Selenium을 사용해서 로그인하고 테이블 패널에서 CSV 다운로드까지 자동화하는 전체 파이썬 코드를 내가 예쁘고 확실하게 만들어줄게요 💻✨
+
+✅ 사용 전 준비사항
+selenium 설치:
+
+bash
+복사
+편집
+pip install selenium==3.141.0
+크롬 드라이버 (chromedriver.exe)를 설치해서 시스템 경로에 추가하거나, 경로를 지정해야 해요.
+
+✅ 자동화 코드 예시
+python
+복사
+편집
+# -*- coding: utf-8 -*-
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import os
+
+# ✅ 설정값
+GRAFANA_URL = "http://localhost:3000/d/abcd1234/my-dashboard"
+GRAFANA_USER = "your_username"
+GRAFANA_PASS = "your_password"
+CSV_DOWNLOAD_DIR = "C:/Users/Uncle/Downloads/grafana_csv"
+
+# ✅ 크롬 옵션 설정
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # 창 없이 실행하고 싶을 때
+chrome_options.add_experimental_option("prefs", {
+    "download.default_directory": CSV_DOWNLOAD_DIR,
+    "download.prompt_for_download": False,
+    "download.directory_upgrade": True,
+    "safebrowsing.enabled": True
+})
+
+# ✅ 크롬 드라이버 실행
+driver = webdriver.Chrome(options=chrome_options)
+
+try:
+    # 1️⃣ Grafana 접속
+    driver.get(GRAFANA_URL)
+    time.sleep(2)
+
+    # 2️⃣ 로그인 수행 (Grafana 기본 로그인 폼 기준)
+    driver.find_element(By.NAME, "user").send_keys(GRAFANA_USER)
+    driver.find_element(By.NAME, "password").send_keys(GRAFANA_PASS)
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    time.sleep(3)
+
+    # 3️⃣ 다시 대시보드 진입
+    driver.get(GRAFANA_URL)
+    time.sleep(5)
+
+    # 4️⃣ 패널 메뉴 열기 (... 버튼)
+    panel_menu = driver.find_element(By.CSS_SELECTOR, "div.panel-menu__trigger")
+    panel_menu.click()
+    time.sleep(1)
+
+    # 5️⃣ "Download CSV" 클릭
+    download_btn = driver.find_element(By.XPATH, "//span[text()='Download CSV']")
+    download_btn.click()
+    time.sleep(5)
+
+    # 6️⃣ 다운로드된 파일 확인
+    files = os.listdir(CSV_DOWNLOAD_DIR)
+    csv_files = [f for f in files if f.endswith(".csv")]
+    print("✅ 다운로드 완료:", csv_files)
+
+except Exception as e:
+    print("❌ 오류 발생:", e)
+
+finally:
+    driver.quit()
+✅ 주의할 점
+패널 메뉴 위치가 다르거나 여러 개 있을 경우 panel_menu 요소를 더 정확히 찾도록 수정해야 할 수 있어요.
+
+CSV가 여러 개 다운로드되는 경우도 있으니, 필요하면 최신 파일만 골라서 처리하는 로직도 넣어줄 수 있어요.
+
+로그인 방식이 SSO, OAuth 같은 방식이라면 로직이 달라지니 꼭 알려줘요!
+
+💋 자기야 커스터마이징 도와줄게!
+여러 패널에서 CSV 저장하고 싶다? → 반복 처리해줄게!
+
+다운로드 후 Pandas로 읽고 엑셀로 합쳐주고 싶다? → 자동 리포트 만들어줄게!
+
+다운받은 CSV 파일 이름 자동으로 변경하거나 날짜 붙이고 싶다? → 언제든 OK!
