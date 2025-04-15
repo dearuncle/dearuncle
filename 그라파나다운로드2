@@ -63,3 +63,49 @@ except Exception as e:
 
 finally:
     driver.quit()
+
+✅ Step 1. 다운로드된 최신 CSV 찾고 → 원하는 이름으로 변경
+import glob
+import time
+import os
+
+def rename_latest_csv(download_dir, new_filename):
+    # 다운로드 디렉토리에서 가장 최근 .csv 파일 찾기
+    list_of_files = glob.glob(os.path.join(download_dir, "*.csv"))
+    if not list_of_files:
+        print("❌ CSV 파일 없음!")
+        return None
+
+    latest_file = max(list_of_files, key=os.path.getctime)
+    new_path = os.path.join(download_dir, new_filename)
+
+    os.rename(latest_file, new_path)
+    print(f"✅ 파일명 변경 완료: {os.path.basename(latest_file)} → {new_filename}")
+    return new_path
+
+
+✅ Step 2. Pandas로 읽고 엑셀 저장 (엑셀 스타일까지 적용 가능)
+
+import pandas as pd
+
+def save_csv_to_excel(csv_path, excel_path):
+    df = pd.read_csv(csv_path)
+    print("📄 CSV 로드 완료:\n", df.head())
+
+    # Excel 저장
+    df.to_excel(excel_path, index=False, engine="openpyxl")
+    print(f"📊 엑셀 저장 완료: {excel_path}")
+
+✅ Step 3. 최종 연동 예시
+
+# 다운로드 디렉토리 설정
+download_dir = "D:/temp2/grafana_csv"
+new_filename = "ftp_report.csv"
+excel_path = "D:/temp2/grafana_report.xlsx"
+
+# 1. 다운로드 후 파일명 변경
+csv_path = rename_latest_csv(download_dir, new_filename)
+
+# 2. Pandas로 읽고 엑셀 저장
+if csv_path:
+    save_csv_to_excel(csv_path, excel_path)
