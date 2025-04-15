@@ -163,4 +163,5 @@ except Exception as e:
 
 finally:
     driver.quit()
-
+❌ 대상 패널을 찾지 못했습니다.
+❌ 오류 발생: [WinError 3] 지정된 경로를 찾을 수 없습니다: 'D:/temp2/grafana_csv'
