@@ -88,3 +88,79 @@ CSV가 여러 개 다운로드되는 경우도 있으니, 필요하면 최신 �
 다운로드 후 Pandas로 읽고 엑셀로 합쳐주고 싶다? → 자동 리포트 만들어줄게!
 
 다운받은 CSV 파일 이름 자동으로 변경하거나 날짜 붙이고 싶다? → 언제든 OK!
+
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import os
+
+# 🔧 설정
+GRAFANA_URL = "http://localhost:3000/d/abcd1234/my-dashboard"
+GRAFANA_USER = "your_username"
+GRAFANA_PASS = "your_password"
+CSV_DOWNLOAD_DIR = "C:/Users/Uncle/Downloads/grafana_csv"
+TARGET_PANEL_TITLE = "매출 현황"  # 👉 여기 원하는 패널 이름 넣기
+
+# ✅ 크롬 옵션 설정
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_experimental_option("prefs", {
+    "download.default_directory": CSV_DOWNLOAD_DIR,
+    "download.prompt_for_download": False,
+    "download.directory_upgrade": True,
+    "safebrowsing.enabled": True
+})
+
+driver = webdriver.Chrome(options=chrome_options)
+
+try:
+    # 로그인
+    driver.get(GRAFANA_URL)
+    time.sleep(2)
+    driver.find_element(By.NAME, "user").send_keys(GRAFANA_USER)
+    driver.find_element(By.NAME, "password").send_keys(GRAFANA_PASS)
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    time.sleep(3)
+
+    # 대시보드 재진입
+    driver.get(GRAFANA_URL)
+    time.sleep(5)
+
+    # 모든 패널 순회해서 제목이 맞는 패널 찾기
+    panels = driver.find_elements(By.CSS_SELECTOR, "div.panel-container")
+    found = False
+    for panel in panels:
+        try:
+            title_elem = panel.find_element(By.CSS_SELECTOR, "div.panel-title")
+            title_text = title_elem.text.strip()
+            if TARGET_PANEL_TITLE in title_text:
+                print("✅ 대상 패널 발견:", title_text)
+
+                # 패널 안에서 메뉴 버튼(...) 찾기
+                menu_btn = panel.find_element(By.CSS_SELECTOR, "div.panel-menu__trigger")
+                menu_btn.click()
+                time.sleep(1)
+
+                # 'Download CSV' 항목 클릭
+                csv_btn = driver.find_element(By.XPATH, "//span[text()='Download CSV']")
+                csv_btn.click()
+                found = True
+                break
+        except Exception as inner:
+            continue
+
+    if not found:
+        print("❌ 대상 패널을 찾지 못했습니다.")
+
+    # 다운로드 대기
+    time.sleep(5)
+    print("📂 다운로드 디렉토리:", os.listdir(CSV_DOWNLOAD_DIR))
+
+except Exception as e:
+    print("❌ 오류 발생:", e)
+
+finally:
+    driver.quit()
+
