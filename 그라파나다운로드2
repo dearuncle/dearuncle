@@ -1,0 +1,65 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import os
+
+# 🔧 설정값
+GRAFANA_URL = "http://localhost:3000/d/abcd1234/my-dashboard"
+GRAFANA_USER = "your_username"
+GRAFANA_PASS = "your_password"
+CSV_DOWNLOAD_DIR = "D:/temp2/grafana_csv"
+TARGET_PANEL_TITLE = "한전FTP전송내역"
+
+# 📁 다운로드 폴더 생성
+if not os.path.exists(CSV_DOWNLOAD_DIR):
+    os.makedirs(CSV_DOWNLOAD_DIR)
+
+# 🧙 크롬 옵션 설정
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_experimental_option("prefs", {
+    "download.default_directory": CSV_DOWNLOAD_DIR,
+    "download.prompt_for_download": False,
+    "download.directory_upgrade": True,
+    "safebrowsing.enabled": True
+})
+
+driver = webdriver.Chrome(options=chrome_options)
+
+try:
+    # 1️⃣ 로그인
+    driver.get(GRAFANA_URL)
+    time.sleep(2)
+    driver.find_element(By.NAME, "user").send_keys(GRAFANA_USER)
+    driver.find_element(By.NAME, "password").send_keys(GRAFANA_PASS)
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    time.sleep(3)
+
+    # 2️⃣ 대시보드 재진입
+    driver.get(GRAFANA_URL)
+    time.sleep(5)
+
+    # 3️⃣ 정확한 data-testid로 section 찾기
+    selector = f'section[data-testid*="Panel header {TARGET_PANEL_TITLE}"]'
+    section = driver.find_element(By.CSS_SELECTOR, selector)
+    print("✅ 대상 패널 section 찾음!")
+
+    # 4️⃣ 해당 section 내부에서 메뉴 버튼 클릭
+    menu_button = section.find_element(By.CSS_SELECTOR, f'button[data-testid*="Panel menu {TARGET_PANEL_TITLE}"]')
+    menu_button.click()
+    time.sleep(1)
+
+    # 5️⃣ 'Download CSV' 메뉴 클릭
+    csv_button = driver.find_element(By.XPATH, "//span[text()='Download CSV']")
+    csv_button.click()
+    print("📥 CSV 다운로드 클릭 완료!")
+
+    time.sleep(5)
+    print("📂 다운로드 완료:", os.listdir(CSV_DOWNLOAD_DIR))
+
+except Exception as e:
+    print("❌ 오류 발생:", e)
+
+finally:
+    driver.quit()
