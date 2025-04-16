@@ -1,0 +1,122 @@
+import tkinter as tk
+from tkinter import messagebox
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import os
+
+
+def collect_grafana_inputs():
+    def on_submit():
+        url = url_entry.get().strip()
+        user = user_entry.get().strip()
+        password = password_entry.get().strip()
+        panels_raw = panels_text.get("1.0", tk.END).strip()
+        panel_list = [p.strip() for p in panels_raw.split(",") if p.strip()]
+
+        if not url or not user or not password or not panel_list:
+            messagebox.showerror("입력 오류", "모든 필드를 채워주세요.")
+            return
+
+        # 저장 후 종료
+        inputs["url"] = url
+        inputs["user"] = user
+        inputs["password"] = password
+        inputs["panels"] = panel_list
+        root.destroy()
+
+    inputs = {}
+    root = tk.Tk()
+    root.title("Grafana 패널 다운로드 설정")
+
+    tk.Label(root, text="Grafana 대시보드 URL").grid(row=0, column=0, sticky="w")
+    url_entry = tk.Entry(root, width=60)
+    url_entry.grid(row=0, column=1)
+
+    tk.Label(root, text="사용자 ID").grid(row=1, column=0, sticky="w")
+    user_entry = tk.Entry(root, width=30)
+    user_entry.grid(row=1, column=1, sticky="w")
+
+    tk.Label(root, text="비밀번호").grid(row=2, column=0, sticky="w")
+    password_entry = tk.Entry(root, width=30, show="*")
+    password_entry.grid(row=2, column=1, sticky="w")
+
+    tk.Label(root, text="패널 제목 목록 (쉼표로 구분)").grid(row=3, column=0, sticky="nw")
+    panels_text = tk.Text(root, width=60, height=4)
+    panels_text.grid(row=3, column=1, pady=5)
+
+    submit_btn = tk.Button(root, text="확인", command=on_submit)
+    submit_btn.grid(row=4, column=1, pady=10, sticky="e")
+
+    root.mainloop()
+    return inputs if inputs else None
+
+
+def download_grafana_panels(url, user, password, panel_titles, download_dir):
+    chrome_options = Options()
+    chrome_options.add_experimental_option("prefs", {
+        "download.default_directory": os.path.abspath(download_dir),
+        "download.prompt_for_download": False,
+        "safebrowsing.enabled": True
+    })
+    # chrome_options.add_argument("--headless")  # 테스트 시 주석 처리
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        driver.get(url)
+        time.sleep(2)
+        driver.find_element(By.NAME, "user").send_keys(user)
+        driver.find_element(By.NAME, "password").send_keys(password)
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+        time.sleep(3)
+
+        driver.get(url)
+        time.sleep(5)
+
+        for panel_title in panel_titles:
+            try:
+                print(f"\n🔍 패널 찾는 중: {panel_title}")
+                selector = f'section[data-testid*="Panel header {panel_title}"]'
+                section = driver.find_element(By.CSS_SELECTOR, selector)
+                menu_button = section.find_element(By.CSS_SELECTOR, f'button[data-testid*="Panel menu {panel_title}"]')
+                driver.execute_script("arguments[0].click();", menu_button)
+                time.sleep(1)
+
+                inspect_btn = driver.find_element(By.XPATH, "//span[text()='Inspect']")
+                driver.execute_script("arguments[0].click();", inspect_btn)
+                time.sleep(1)
+
+                csv_btn = driver.find_element(By.XPATH, "//span[text()='Download CSV']")
+                driver.execute_script("arguments[0].click();", csv_btn)
+                print(f"📥 [{panel_title}] CSV 다운로드 완료")
+                time.sleep(3)
+
+            except Exception as e:
+                print(f"❌ [{panel_title}] 패널 오류:", e)
+
+        print("\n✅ 모든 패널 다운로드 완료")
+
+    except Exception as e:
+        print("❌ 전체 오류:", e)
+
+    finally:
+        driver.quit()
+
+
+# 메인 실행
+user_inputs = collect_grafana_inputs()
+if user_inputs:
+    download_dir = "D:/temp2/grafana_csv"
+    if not os.path.exists(download_dir):
+        os.makedirs(download_dir)
+
+    download_grafana_panels(
+        url=user_inputs["url"],
+        user=user_inputs["user"],
+        password=user_inputs["password"],
+        panel_titles=user_inputs["panels"],
+        download_dir=download_dir
+    )
+else:
+    print("❌ 입력 취소 또는 오류")
