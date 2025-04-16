@@ -1,0 +1,114 @@
+import tkinter as tk
+from tkinter import messagebox, filedialog
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import os
+from datetime import datetime
+
+# 리포트명과 URL 및 패널 목록 매핑
+REPORTS = {
+    "리포트1": {
+        "url": "http://example.com/report1",
+        "panels": ["패널1A", "패널1B", "패널1C"]
+    },
+    "리포트2": {
+        "url": "http://example.com/report2",
+        "panels": ["패널2A", "패널2B"]
+    }
+}
+
+def collect_grafana_inputs():
+    def on_report_select(*args):
+        selected = report_var.get()
+        url_entry.delete(0, tk.END)
+        url_entry.insert(0, REPORTS[selected]["url"])
+        panel_menu['menu'].delete(0, 'end')
+        new_panels = REPORTS[selected]["panels"]
+        panel_var.set(new_panels[0])
+        for panel in new_panels:
+            panel_menu['menu'].add_command(label=panel, command=tk._setit(panel_var, panel))
+
+    def on_submit():
+        url = url_entry.get().strip()
+        user = user_entry.get().strip()
+        password = password_entry.get().strip()
+        date_filter = date_entry.get().strip()
+        selected_panel = panel_var.get().strip()
+        folder = download_path.get().strip()
+
+        if not url or not user or not password or not selected_panel or not folder:
+            messagebox.showerror("입력 오류", "모든 필드를 채워주세요.")
+            return
+
+        inputs["url"] = url
+        inputs["user"] = user
+        inputs["password"] = password
+        inputs["panels"] = [selected_panel]
+        inputs["date"] = date_filter
+        inputs["folder"] = folder
+        root.destroy()
+
+    def browse_folder():
+        folder_selected = filedialog.askdirectory()
+        if folder_selected:
+            download_path.set(folder_selected)
+
+    inputs = {}
+    root = tk.Tk()
+    root.title("Grafana 패널 다운로드 설정")
+    root.resizable(False, False)
+    root.configure(bg="#f4f4f8")
+
+    font_style = ("맑은 고딕", 10)
+    label_fg = "#333"
+
+    tk.Label(root, text="리포트 선택", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=0, column=0, sticky="w")
+    report_var = tk.StringVar(value=list(REPORTS.keys())[0])
+    report_menu = tk.OptionMenu(root, report_var, *REPORTS.keys(), command=on_report_select)
+    report_menu.config(font=font_style)
+    report_menu.grid(row=0, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="Grafana 대시보드 URL", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=1, column=0, sticky="w")
+    url_entry = tk.Entry(root, width=60, font=font_style)
+    url_entry.grid(row=1, column=1, columnspan=2, sticky="w")
+    url_entry.insert(0, REPORTS[report_var.get()]["url"])
+
+    tk.Label(root, text="사용자 ID", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=2, column=0, sticky="w")
+    user_entry = tk.Entry(root, width=30, font=font_style)
+    user_entry.insert(0, "admin")
+    user_entry.grid(row=2, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="비밀번호", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=3, column=0, sticky="w")
+    password_entry = tk.Entry(root, width=30, show="*", font=font_style)
+    password_entry.grid(row=3, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="조회 기준 날짜 (YYYYMMDD)", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=4, column=0, sticky="w")
+    date_entry = tk.Entry(root, width=20, font=font_style)
+    date_entry.insert(0, datetime.today().strftime('%Y%m%d'))
+    date_entry.grid(row=4, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="다운로드 저장 경로", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=5, column=0, sticky="w")
+    download_path = tk.StringVar()
+    path_frame = tk.Frame(root, bg="#f4f4f8")
+    path_frame.grid(row=5, column=1, columnspan=2, sticky="w")
+    path_entry = tk.Entry(path_frame, textvariable=download_path, width=40, font=font_style)
+    path_entry.pack(side="left")
+    browse_btn = tk.Button(path_frame, text="찾아보기", command=browse_folder, font=font_style, bg="#ffffff")
+    browse_btn.pack(side="left", padx=5)
+
+    tk.Label(root, text="패널 선택", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=6, column=0, sticky="w")
+    panel_var = tk.StringVar(value=REPORTS[report_var.get()]["panels"][0])
+    panel_menu = tk.OptionMenu(root, panel_var, *REPORTS[report_var.get()]["panels"])
+    panel_menu.config(font=font_style)
+    panel_menu.grid(row=6, column=1, columnspan=2, sticky="w")
+
+    submit_btn = tk.Button(root, text="확인", command=on_submit, font=("맑은 고딕", 10, "bold"), bg="#4CAF50", fg="white")
+    submit_btn.grid(row=7, column=1, columnspan=2, pady=10, sticky="e")
+
+    root.mainloop()
+    return inputs if inputs else None
+
+# 기존 download_grafana_panels 함수는 그대로 유지
+# 메인 실행 로직도 그대로 유지
