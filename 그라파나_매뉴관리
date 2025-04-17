@@ -1,0 +1,277 @@
+import tkinter as tk
+from tkinter import messagebox, filedialog
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import os
+import json
+from datetime import datetime
+import re
+
+# 외부 JSON에서 리포트 정보 불러오기
+# 외부 JSON에서 리포트 정보 불러오기 및 수정 가능하게
+REPORTS_FILE = "reports.json"
+if os.path.exists(REPORTS_FILE):
+    with open(REPORTS_FILE, "r", encoding="utf-8") as f:
+        REPORTS = json.load(f)
+else:
+    REPORTS = {}
+
+def save_reports():
+    with open(REPORTS_FILE, "w", encoding="utf-8") as f:
+        json.dump(REPORTS, f, indent=2, ensure_ascii=False)
+
+log_text = None  # 전역 로그 텍스트박스 참조
+
+def log(message):
+    global log_text
+    if log_text:
+        clean_message = re.sub(r'[^가-힣a-zA-Z0-9 .,\-_\/
+]', '', message)
+        log_text.insert(tk.END, clean_message + "
+")
+        log_text.see(tk.END)
+        log_text.update_idletasks()  # 💡 GUI 강제 갱신
+
+def collect_grafana_inputs(log_callback):
+    def manage_reports():
+        report_window = tk.Toplevel()
+        report_window.title("리포트 관리")
+        report_window.geometry("500x400")
+
+        listbox = tk.Listbox(report_window, font=("맑은 고딕", 10))
+        listbox.pack(fill="both", expand=True, padx=10, pady=10)
+        for key in REPORTS:
+            listbox.insert(tk.END, key)
+
+        def refresh_list():
+            listbox.delete(0, tk.END)
+            for k in REPORTS:
+                listbox.insert(tk.END, k)
+
+        def add_report():
+            name = simple_input("리포트 이름 입력")
+            if name and name not in REPORTS:
+                REPORTS[name] = {"url": "", "panels": []}
+                refresh_list()
+
+        def edit_report():
+            idx = listbox.curselection()
+            if not idx:
+                return
+            name = listbox.get(idx)
+            url = simple_input("URL 입력", REPORTS[name]["url"])
+            panels = simple_input("패널 목록 (쉼표 구분)", ", ".join(REPORTS[name]["panels"]))
+            REPORTS[name]["url"] = url
+            REPORTS[name]["panels"] = [p.strip() for p in panels.split(",") if p.strip()]
+
+        def delete_report():
+            idx = listbox.curselection()
+            if not idx:
+                return
+            name = listbox.get(idx)
+            if messagebox.askyesno("삭제 확인", f"리포트 '{name}'을 삭제할까요?"):
+                del REPORTS[name]
+                refresh_list()
+
+        def save_and_close():
+            save_reports()
+            report_window.destroy()
+
+        def simple_input(prompt, default=""):
+            input_win = tk.Toplevel()
+            input_win.title(prompt)
+            input_var = tk.StringVar(value=default)
+            tk.Entry(input_win, textvariable=input_var, width=60).pack(padx=10, pady=10)
+            tk.Button(input_win, text="확인", command=input_win.destroy).pack(pady=5)
+            input_win.grab_set()
+            input_win.wait_window()
+            return input_var.get()
+
+        btn_frame = tk.Frame(report_window)
+        btn_frame.pack(pady=5)
+        tk.Button(btn_frame, text="추가", command=add_report).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="수정", command=edit_report).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="삭제", command=delete_report).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="저장 및 닫기", command=save_and_close).pack(side="right", padx=5)
+    def on_report_select(*args):
+        selected = report_var.get()
+        url_entry.delete(0, tk.END)
+        url_entry.insert(0, REPORTS[selected]["url"])
+        panel_menu['menu'].delete(0, 'end')
+        new_panels = REPORTS[selected]["panels"]
+        panel_var.set(new_panels[0])
+        for panel in new_panels:
+            panel_menu['menu'].add_command(label=panel, command=tk._setit(panel_var, panel))
+
+    def on_submit():
+        url = url_entry.get().strip()
+        user = user_entry.get().strip()
+        password = password_entry.get().strip()
+        date_filter = date_entry.get().strip()
+        selected_panel = panel_var.get().strip()
+        folder = download_path.get().strip()
+
+        if not url or not user or not password or not selected_panel or not folder:
+            messagebox.showerror("입력 오류", "모든 필드를 채워주세요.")
+            return
+
+        inputs["url"] = url
+        inputs["user"] = user
+        inputs["password"] = password
+        inputs["panels"] = [selected_panel]
+        inputs["date"] = date_filter
+        inputs["folder"] = folder
+
+        # 입력만 저장하고 창은 유지
+        log("✅ 입력 완료. 다운로드를 시작합니다...")
+        import threading
+        threading.Thread(target=download_grafana_panels, kwargs={
+            "url": url,
+            "user": user,
+            "password": password,
+            "panel_titles": [selected_panel],
+            "download_dir": folder,
+            "log": log
+        }).start()  # 💡 백그라운드에서 다운로드 실행 (GUI 멈춤 방지)
+
+    def browse_folder():
+        folder_selected = filedialog.askdirectory()
+        if folder_selected:
+            download_path.set(folder_selected)
+
+    global log_text
+    inputs = {}
+    root = tk.Toplevel()
+    root.title("Grafana 패널 다운로드 설정")
+    root.resizable(False, False)
+    root.configure(bg="#f4f4f8")
+
+    font_style = ("맑은 고딕", 10)
+    label_fg = "#333"
+
+    tk.Label(root, text="리포트 선택", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=0, column=0, sticky="w")
+    tk.Button(root, text="✏️ 관리", command=manage_reports, font=font_style).grid(row=0, column=3, sticky="w", padx=5)
+    report_var = tk.StringVar(value=list(REPORTS.keys())[0])
+    report_menu = tk.OptionMenu(root, report_var, *REPORTS.keys(), command=on_report_select)
+    report_menu.config(font=font_style)
+    report_menu.grid(row=0, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="Grafana 대시보드 URL", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=1, column=0, sticky="w")
+    url_entry = tk.Entry(root, width=60, font=font_style)
+    url_entry.grid(row=1, column=1, columnspan=2, sticky="w")
+    url_entry.insert(0, REPORTS[report_var.get()]["url"])
+
+    tk.Label(root, text="사용자 ID", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=2, column=0, sticky="w")
+    user_entry = tk.Entry(root, width=30, font=font_style)
+    user_entry.insert(0, "admin")
+    user_entry.grid(row=2, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="비밀번호", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=3, column=0, sticky="w")
+    password_entry = tk.Entry(root, width=30, show="*", font=font_style)
+    password_entry.grid(row=3, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="조회 기준 날짜 (YYYYMMDD)", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=4, column=0, sticky="w")
+    date_entry = tk.Entry(root, width=20, font=font_style)
+    date_entry.insert(0, datetime.today().strftime('%Y%m%d'))
+    date_entry.grid(row=4, column=1, columnspan=2, sticky="w")
+
+    tk.Label(root, text="다운로드 저장 경로", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=5, column=0, sticky="w")
+    download_path = tk.StringVar()
+    path_frame = tk.Frame(root, bg="#f4f4f8")
+    path_frame.grid(row=5, column=1, columnspan=2, sticky="w")
+    path_entry = tk.Entry(path_frame, textvariable=download_path, width=40, font=font_style)
+    path_entry.pack(side="left")
+    browse_btn = tk.Button(path_frame, text="찾아보기", command=browse_folder, font=font_style, bg="#ffffff")
+    browse_btn.pack(side="left", padx=5)
+
+    tk.Label(root, text="패널 선택", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=6, column=0, sticky="w")
+    panel_var = tk.StringVar(value=REPORTS[report_var.get()]["panels"][0])
+    panel_menu = tk.OptionMenu(root, panel_var, *REPORTS[report_var.get()]["panels"])
+    panel_menu.config(font=font_style)
+    panel_menu.grid(row=6, column=1, columnspan=2, sticky="w")
+
+    submit_btn = tk.Button(root, text="확인", command=on_submit, font=("맑은 고딕", 10, "bold"), bg="#4CAF50", fg="white")
+    submit_btn.grid(row=7, column=1, pady=10, sticky="e")
+
+    import sys
+    cancel_btn = tk.Button(root, text="취소", command=lambda: sys.exit(0), font=("맑은 고딕", 10, "bold"), bg="#f44336", fg="white")
+    cancel_btn.grid(row=7, column=0, pady=10, sticky="w")
+
+    # 로그 출력 텍스트박스는 log 함수보다 먼저 선언돼야 함
+    log_text = tk.Text(root, height=10, width=80, font=("맑은 고딕", 9), bg="#1e1e1e", fg="#9cdcfe", insertbackground="#9cdcfe")
+    log_text.grid(row=8, column=0, columnspan=3, padx=10, pady=10)
+    log_text.grid(row=8, column=0, columnspan=3, padx=10, pady=10)
+
+    root.protocol("WM_DELETE_WINDOW", lambda: sys.exit(0))
+    root.grab_set()
+    root.mainloop()
+    return inputs if inputs else None, log
+
+def download_grafana_panels(url, user, password, panel_titles, download_dir, log):
+    chrome_options = Options()
+    chrome_options.add_experimental_option("prefs", {
+        "download.default_directory": os.path.abspath(download_dir),
+        "download.prompt_for_download": False,
+        "safebrowsing.enabled": True
+    })
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        driver.get(url)
+        time.sleep(2)
+        driver.find_element(By.NAME, "user").send_keys(user)
+        driver.find_element(By.NAME, "password").send_keys(password)
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+        time.sleep(3)
+
+        driver.get(url)
+        time.sleep(5)
+
+        for panel_title in panel_titles:
+            try:
+                log(f"🔍 패널 찾는 중: {panel_title}")
+                selector = f'section[data-testid*="Panel header {panel_title}"]'
+                section = driver.find_element(By.CSS_SELECTOR, selector)
+                menu_button = section.find_element(By.CSS_SELECTOR, f'button[data-testid*="Panel menu {panel_title}"]')
+                driver.execute_script("arguments[0].click();", menu_button)
+                time.sleep(1)
+
+                inspect_btn = driver.find_element(By.XPATH, "//span[text()='Inspect']")
+                driver.execute_script("arguments[0].click();", inspect_btn)
+                time.sleep(1)
+
+                csv_btn = driver.find_element(By.XPATH, "//span[text()='Download CSV']")
+                driver.execute_script("arguments[0].click();", csv_btn)
+                log(f"📥 [{panel_title}] CSV 다운로드 완료")
+                time.sleep(3)
+
+            except Exception as e:
+                log(f"❌ [{panel_title}] 패널 오류: {e}")
+
+        log("✅ 모든 패널 다운로드 완료")
+        messagebox.showinfo("완료", "CSV 다운로드가 완료되었습니다.")
+
+    except Exception as e:
+        log(f"❌ 전체 오류: {e}")
+
+    finally:
+        driver.quit()
+
+# GUI → 초기 실행
+# 메인 루트 창 숨기기 (빈 Tk 창 방지)
+root = tk.Tk()
+root.withdraw()
+result = collect_grafana_inputs(log_callback=None)
+# 이후 동작은 collect_grafana_inputs 내부에서 수행
+        import threading
+
+threading.Thread(target=download_grafana_panels, kwargs={
+    "url": user_inputs["url"],
+    "user": user_inputs["user"],
+    "password": user_inputs["password"],
+    "panel_titles": user_inputs["panels"],
+    "download_dir": user_inputs["folder"],
+    "log": log
+}).start()
