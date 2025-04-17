@@ -275,3 +275,31 @@ threading.Thread(target=download_grafana_panels, kwargs={
     "download_dir": user_inputs["folder"],
     "log": log
 }).start()
+
+
+def edit_report():
+    idx = listbox.curselection()
+    if not idx:
+        return
+    name = listbox.get(idx)
+
+    editor = tk.Toplevel(report_window)
+    editor.title(f"{name} 수정")
+    editor.geometry("500x200")
+
+    tk.Label(editor, text="URL:").pack(anchor="w", padx=10, pady=(10, 0))
+    url_var = tk.StringVar(value=REPORTS[name]["url"])
+    tk.Entry(editor, textvariable=url_var, width=60).pack(padx=10)
+
+    tk.Label(editor, text="패널 목록 (쉼표 구분):").pack(anchor="w", padx=10, pady=(10, 0))
+    panels_var = tk.StringVar(value=", ".join(REPORTS[name]["panels"]))
+    tk.Entry(editor, textvariable=panels_var, width=60).pack(padx=10)
+
+    def save():
+        REPORTS[name]["url"] = url_var.get().strip()
+        REPORTS[name]["panels"] = [p.strip() for p in panels_var.get().split(",") if p.strip()]
+        editor.destroy()
+
+    tk.Button(editor, text="저장", command=save).pack(pady=10)
+    editor.transient(report_window)
+    editor.grab_set()
