@@ -378,9 +378,26 @@ def download_grafana_panels(url, user, password, panel_titles, download_dir, log
                         found = True
                         break
                     except:
-                        driver.execute_script("window.scrollBy(0, 400);")
+                    except:
+                        driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        container.scrollTop += 400;
+        return container.scrollTop;
+    } else {
+        window.scrollBy(0, 400);
+        return window.pageYOffset;
+    }
+""")
                         time.sleep(0.5)
-                        new_height = driver.execute_script("return window.pageYOffset + window.innerHeight")
+                        new_height = driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        return container.scrollTop + container.clientHeight;
+    } else {
+        return window.pageYOffset + window.innerHeight;
+    }
+""")
                         if new_height >= last_height:
                             break
 
