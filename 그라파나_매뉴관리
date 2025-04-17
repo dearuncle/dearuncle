@@ -303,3 +303,98 @@ def edit_report():
     tk.Button(editor, text="저장", command=save).pack(pady=10)
     editor.transient(report_window)
     editor.grab_set()
+
+
+
+
+
+
+---------------------
+
+import tkinter as tk
+from tkinter import messagebox, filedialog
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import os
+import json
+from datetime import datetime
+import re
+
+# 외부 JSON에서 리포트 정보 불러오기 및 수정 가능하게
+REPORTS_FILE = os.path.join(os.path.dirname(__file__), "reports.json")  # py 파일과 같은 경로에 reports.json 설정
+if os.path.exists(REPORTS_FILE):
+    with open(REPORTS_FILE, "r", encoding="utf-8") as f:
+        REPORTS = json.load(f)
+else:
+    REPORTS = {}
+
+def save_reports():
+    with open(REPORTS_FILE, "w", encoding="utf-8") as f:
+        json.dump(REPORTS, f, indent=2, ensure_ascii=False)
+
+def download_grafana_panels(url, user, password, panel_titles, download_dir, log):
+    chrome_options = Options()
+    chrome_options.add_experimental_option("prefs", {
+        "download.default_directory": os.path.abspath(download_dir),
+        "download.prompt_for_download": False,
+        "safebrowsing.enabled": True
+    })
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        driver.get(url)
+        time.sleep(2)
+        driver.find_element(By.NAME, "user").send_keys(user)
+        driver.find_element(By.NAME, "password").send_keys(password)
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+        time.sleep(3)
+
+        driver.get(url)
+        time.sleep(5)
+
+        for panel_title in panel_titles:
+            try:
+                found = False
+                last_height = driver.execute_script("return document.body.scrollHeight")
+
+                while True:
+                    try:
+                        selector = f'section[data-testid*="Panel header {panel_title}"]'
+                        section = driver.find_element(By.CSS_SELECTOR, selector)
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", section)
+                        time.sleep(0.5)
+                        menu_button = section.find_element(By.CSS_SELECTOR, f'button[data-testid*="Panel menu {panel_title}"]')
+                        driver.execute_script("arguments[0].click();", menu_button)
+                        time.sleep(1)
+                        inspect_btn = driver.find_element(By.XPATH, "//span[text()='Inspect']")
+                        driver.execute_script("arguments[0].click();", inspect_btn)
+                        time.sleep(1)
+                        csv_btn = driver.find_element(By.XPATH, "//span[text()='Download CSV']")
+                        driver.execute_script("arguments[0].click();", csv_btn)
+                        log(f"📥 [{panel_title}] CSV 다운로드 완료")
+                        time.sleep(3)
+                        found = True
+                        break
+                    except:
+                        driver.execute_script("window.scrollBy(0, 400);")
+                        time.sleep(0.5)
+                        new_height = driver.execute_script("return window.pageYOffset + window.innerHeight")
+                        if new_height >= last_height:
+                            break
+
+                if not found:
+                    log(f"❌ [{panel_title}] 패널을 찾을 수 없습니다.")
+
+            except Exception as e:
+                log(f"❌ [{panel_title}] 처리 중 오류 발생: {e}")
+
+        log("✅ 모든 패널 다운로드 완료")
+        messagebox.showinfo("완료", "CSV 다운로드가 완료되었습니다.")
+
+    except Exception as e:
+        log(f"❌ 전체 오류: {e}")
+
+    finally:
+        driver.quit()
