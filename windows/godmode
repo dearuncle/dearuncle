@@ -33,6 +33,43 @@ schtasks /delete /tn "%taskName%" /f
 
 exit
 
+
+@echo off
+set taskName=TempSystemCMDTask
+
+:: 현재 시간 기준 +1분 계산 (HH:MM 형식)
+for /f "tokens=1-2 delims=:" %%a in ("%time%") do (
+    set /a hh=1%%a %% 100
+    set /a mm=1%%b + 1
+)
+
+:: 분이 60이 넘는 경우 조정
+if %mm% GEQ 60 (
+    set /a mm=mm - 60
+    set /a hh=hh + 1
+)
+
+:: 시, 분을 두 자리 수로 포맷
+if %hh% LSS 10 set hh=0%hh%
+if %mm% LSS 10 set mm=0%mm%
+
+set startTime=%hh%:%mm%
+
+:: 1. 작업 생성
+schtasks /create /tn "%taskName%" /tr "cmd.exe" /sc ONCE /st %startTime% /ru "SYSTEM" /f
+
+:: 2. 실행 (혹시 몰라 약간 대기)
+timeout /t 5 > nul
+schtasks /run /tn "%taskName%"
+
+:: 3. 실행 후 잠깐 기다렸다가 삭제
+timeout /t 5 > nul
+schtasks /delete /tn "%taskName%" /f
+
+exit
+
+
+
 ✅ 사용 방법
 메모장에 위 내용을 복사하여 붙여넣기
 
