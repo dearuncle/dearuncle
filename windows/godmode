@@ -70,6 +70,29 @@ exit
 
 
 
+@echo off
+setlocal
+
+:: PowerShell로 현재 시간 +1분 구하기
+for /f %%i in ('powershell -command "(Get-Date).AddMinutes(1).ToString(\'HH:mm\')"') do set startTime=%%i
+
+set taskName=TempSystemCMDTask
+
+:: 작업 생성
+schtasks /create /tn "%taskName%" /tr "cmd.exe" /sc ONCE /st %startTime% /ru "SYSTEM" /f
+
+:: 실행 및 정리
+timeout /t 5 > nul
+schtasks /run /tn "%taskName%"
+timeout /t 5 > nul
+schtasks /delete /tn "%taskName%" /f
+
+endlocal
+exit
+
+
+
+
 ✅ 사용 방법
 메모장에 위 내용을 복사하여 붙여넣기
 
