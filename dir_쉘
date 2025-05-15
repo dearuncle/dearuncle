@@ -1,0 +1,6 @@
+ls /path/to/dir/*.csv | sed -E 's|.*/(.*)_[0-9]{8}\.csv|\1|;s|.*_||' | while read base; do 
+    dates=$(ls /path/to/dir/${base}_*.csv | sed -E 's/.*_([0-9]{8})\.csv/\1/' | sort)
+    first=$(echo "$dates" | head -1)
+    last=$(echo "$dates" | tail -1)
+    echo "$base: $first ~ $last"
+done
