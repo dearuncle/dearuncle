@@ -1,0 +1,13 @@
+function detect_date(name, raw, ext, base, m) {
+    # 이름_날짜.확장자 패턴
+    if (match(name, /^(.*)_([0-9]{6,12})\.[^.]+$/, m)) {
+        raw = m[2]
+        return (length(raw) >= 8) ? substr(raw, 1, 8) : raw
+    }
+    # 날짜_이름.확장자 패턴
+    else if (match(name, /^([0-9]{6,12})_(.*)\.[^.]+$/, m)) {
+        raw = m[1]
+        return (length(raw) >= 8) ? substr(raw, 1, 8) : raw
+    }
+    return ""
+}
