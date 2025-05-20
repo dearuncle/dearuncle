@@ -202,12 +202,13 @@ done
 for dir in /your/path1 /your/path2; do
     echo "📂 Directory: $dir"
 
-    find "$dir" -type f -exec stat --format="%s|%n" {} \; | \
-    sed -En '
-        # 뒤에 날짜가 있는 파일: name_YYYYMMDD[HHMM].ext
-        s|^([0-9]+)\|(.*)/([^/_]+)_([0-9]{6,12})\.([a-zA-Z0-9]+)$|\1 \3 \4 \5|p
-        # 앞에 날짜가 있는 파일: YYYYMMDD[HHMM]_name.ext
-        s|^([0-9]+)\|(.*)/([0-9]{6,12})_([^/_]+)\.([a-zA-Z0-9]+)$|\1 \4 \3 \5|p
+    find "$dir" -type f -exec stat --format="%s|%n" {} \; | sed -En '
+        # 패턴 1: name_YYYYMMDD(HHMM).ext
+        s|^([0-9]+)\|.*/([^/_]+)_([0-9]{6,12})\.([a-zA-Z0-9]+)$|\1 \2 \3 \4|p
+        t done
+        # 패턴 2: YYYYMMDD(HHMM)_name.ext
+        s|^([0-9]+)\|.*/([0-9]{6,12})_([^/_]+)\.([a-zA-Z0-9]+)$|\1 \3 \2 \4|p
+        :done
     ' | awk '
     function fmt_date(d) {
         return (length(d) == 8) ? substr(d,1,4) "-" substr(d,5,2) "-" substr(d,7,2) :
@@ -215,18 +216,16 @@ for dir in /your/path1 /your/path2; do
     }
 
     {
-        size = $1      # stat에서 추출된 크기
-        base = $2      # 파일 이름
+        size = $1      # 파일 크기 (bytes)
+        base = $2      # 베이스 이름
         raw_date = $3  # 날짜
         ext = $4       # 확장자
 
         date = (length(raw_date) >= 8) ? substr(raw_date, 1, 8) : raw_date
         key = base "." ext
 
-
         count[key]++
         size_sum[key] += size
-
         if (!(key in min) || date < min[key]) min[key] = date
         if (!(key in max) || date > max[key]) max[key] = date
     }
