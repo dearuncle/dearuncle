@@ -195,3 +195,52 @@ for dir in /path/to/dir1 /path/to/dir2; do
 done
 
 
+----------
+
+#!/bin/bash
+
+for dir in /your/path1 /your/path2; do
+    echo "📂 Directory: $dir"
+
+    find "$dir" -type f -exec stat --format="%s|%n" {} \; | \
+    sed -En '
+        # 뒤에 날짜가 있는 파일: name_YYYYMMDD[HHMM].ext
+        s|^([0-9]+)\|(.*)/([^/_]+)_([0-9]{6,12})\.([a-zA-Z0-9]+)$|\1 \3 \4 \5|p
+        # 앞에 날짜가 있는 파일: YYYYMMDD[HHMM]_name.ext
+        s|^([0-9]+)\|(.*)/([0-9]{6,12})_([^/_]+)\.([a-zA-Z0-9]+)$|\1 \4 \3 \5|p
+    ' | awk '
+    function fmt_date(d) {
+        return (length(d) == 8) ? substr(d,1,4) "-" substr(d,5,2) "-" substr(d,7,2) :
+               (length(d) == 6) ? substr(d,1,4) "-" substr(d,5,2) : d
+    }
+
+    {
+        size = $1      # stat에서 추출된 크기
+        base = $2      # 파일 이름
+        raw_date = $3  # 날짜
+        ext = $4       # 확장자
+
+        date = (length(raw_date) >= 8) ? substr(raw_date, 1, 8) : raw_date
+        key = base "." ext
+
+
+        count[key]++
+        size_sum[key] += size
+
+        if (!(key in min) || date < min[key]) min[key] = date
+        if (!(key in max) || date > max[key]) max[key] = date
+    }
+
+    END {
+        for (k in count) {
+            printf "  %-20s: %s ~ %s (%d files, %.1f MB)\n",
+                k,
+                fmt_date(min[k]),
+                fmt_date(max[k]),
+                count[k],
+                size_sum[k]/1024/1024
+        }
+    }'
+
+    echo ""
+done
