@@ -68,3 +68,65 @@ for dir in /path/to/dir1 /path/to/dir2; do
     echo ""
 done
 
+
+
+
+
+#!/bin/bash
+
+for dir in /path/to/dir1 /path/to/dir2; do
+    echo "📂 Directory: $dir"
+
+    find "$dir" -type f -exec stat --format='%s %n' {} \; | awk '
+    function short_date(str, raw) {
+        # 뒤쪽 날짜: name_YYYYMMDD(HHMM).ext
+        if (match(str, /^(.*)_([0-9]{6,12})\.[^.]+$/, m)) {
+            base = m[1]
+            raw = m[2]
+            ext = gensub(/^.*\.([^.]+)$/, "\\1", "g", str)
+        }
+        # 앞쪽 날짜: YYYYMMDD(HHMM)_name.ext
+        else if (match(str, /^([0-9]{6,12})_(.*)\.[^.]+$/, m)) {
+            raw = m[1]
+            base = m[2]
+            ext = gensub(/^.*\.([^.]+)$/, "\\1", "g", str)
+        } else {
+            return ""
+        }
+
+        key = base "." ext
+        date = (length(raw) >= 8) ? substr(raw, 1, 8) : raw
+
+        # 누적
+        count[key]++
+        size_sum[key] += $1
+        if (!(key in min) || date < min[key]) min[key] = date
+        if (!(key in max) || date > max[key]) max[key] = date
+
+        return 1
+    }
+
+    function fmt_date(d) {
+        return (length(d) == 8) ? substr(d,1,4) "-" substr(d,5,2) "-" substr(d,7,2) :
+               (length(d) == 6) ? substr(d,1,4) "-" substr(d,5,2) : d
+    }
+
+    {
+        if (short_date($2) == "") next
+    }
+
+    END {
+        for (k in count) {
+            printf "  %-20s: %s ~ %s (%d files, %.1f MB)\n",
+                k,
+                fmt_date(min[k]),
+                fmt_date(max[k]),
+                count[k],
+                size_sum[k]/1024/1024
+        }
+    }'
+
+    echo ""
+done
+
+
