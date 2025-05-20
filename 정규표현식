@@ -11,3 +11,60 @@ function detect_date(name, raw, ext, base, m) {
     }
     return ""
 }
+
+
+#!/bin/bash
+
+for dir in /path/to/dir1 /path/to/dir2; do
+    echo "📂 Directory: $dir"
+
+    find "$dir" -type f -exec stat --format='%s %n' {} \; | \
+    sed -En '
+        # 뒤쪽 날짜: name_YYYYMMDD(HHMM).ext
+        s|^[0-9]+ (.+)/([^/]+)_([0-9]{6,12})\.([a-zA-Z0-9]+)$|\1/\2 \3 \4|p
+        # 앞쪽 날짜: YYYYMMDD(HHMM)_name.ext
+        s|^[0-9]+ (.+)/([0-9]{6,12})_([^/]+)\.([a-zA-Z0-9]+)$|\1/\3 \2 \4|p
+    ' | awk '
+    function short_date(d) {
+        return (length(d) >= 8) ? substr(d, 1, 8) : d
+    }
+    function fmt_date(d) {
+        return (length(d) == 8) ? substr(d,1,4) "-" substr(d,5,2) "-" substr(d,7,2)
+             : (length(d) == 6) ? substr(d,1,4) "-" substr(d,5,2)
+             : d
+    }
+    {
+        fullpath = $1
+        date = short_date($2)
+        ext = $3
+
+        # 추출된 base name + ext 조합
+        base = fullpath
+        sub(/^.*\//, "", base)
+        sub(/_[0-9]{6,12}$/, "", base)
+        sub(/^[0-9]{6,12}_/, "", base)
+        key = base "." ext
+
+        count[key]++
+        cmd = "stat -c %s \"" fullpath "\""
+        cmd | getline size
+        close(cmd)
+        size_sum[key] += size
+
+        if (!(key in min) || date < min[key]) min[key] = date
+        if (!(key in max) || date > max[key]) max[key] = date
+    }
+    END {
+        for (k in count) {
+            printf "  %-20s: %s ~ %s (%d files, %.1f MB)\n",
+                k,
+                fmt_date(min[k]),
+                fmt_date(max[k]),
+                count[k],
+                size_sum[k]/1024/1024
+        }
+    }'
+
+    echo ""
+done
+
