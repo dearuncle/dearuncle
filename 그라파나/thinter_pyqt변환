@@ -172,6 +172,7 @@ if __name__ == "__main__":
 
 ```bash
 pyuic5 -x grafana_ui.ui -o grafana_ui.py
+python -m PyQt5.uic.pyuic -x grafana_ui.ui -o ui_grafana.py
 ```
 
 > ✅ `pyuic5`는 PyQt5 설치 시 포함되어 있으며, 명령어 실행 후 `grafana_ui.py` 파일이 생성됩니다.
