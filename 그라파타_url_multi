@@ -112,3 +112,515 @@ def collect_grafana_inputs():
 
 # 기존 download_grafana_panels 함수는 그대로 유지
 # 메인 실행 로직도 그대로 유지
+
+
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+import glob
+import os
+import pandas as pd
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+import tkinter as tk 
+from tkinter import messagebox, filedialog
+import re
+import json
+
+# 🔧 설정값
+GRAFANA_URL = "http://10.220.173.12:3000/d/eede7d621l0qod/data-set?orgId=1"
+#GRAFANA_URL = "http://10.220.173.12:3000/d/eede7d621l0qod/data-set?orgId=1&from=1744660516895&to=1744682116895"
+GRAFANA_USER = "a91144747"
+GRAFANA_PASS = "New1234!"
+CSV_DOWNLOAD_DIR = r"D:\temp2\grafana_csv"
+DEFAULT_DIR = r"D:\temp2\grafana_csv"
+TARGET_PANEL_TITLE = "한전FTP전송내역"
+
+GRAFANA_REPORTS = {
+    "데일리모니터링": {
+        "url": "http://10.220.173.12:3000/d/adn4z0n07l14wf/daily-monitoring?orgId=1",
+        "panels": ["일시간대유니크_집계", "일유니크_집계", "관광객 증감 비교"]
+    }, 
+    "아이허브전송모니터링": {
+        "url": "http://10.220.173.12:3000/d/eede7d621l0qod/data-set?orgId=1",
+        "panels": ["한전FTP전송내역", "롯데FTP전송내역"]
+    }
+}
+
+REPORTS_FILE = os.path.join(os.path.dirname(__file__), "reports.json")
+
+if os.path.exists(REPORTS_FILE):
+    with open(REPORTS_FILE, "r", encoding="utf-8") as f:
+        GRAFANA_REPORTS = json.load(f)
+else:
+    GRAFANA_REPORTS = {
+        "데일리모니터링": {
+            "url": "http://10.220.173.12:3000/d/adn4z0n07l14wf/daily-monitoring?orgId=1",
+            "panels": ["일시간대유니크_집계", "일유니크_집계", "관광객 증감 비교"]
+        }, 
+        "아이허브전송모니터링": {
+            "url": "http://10.220.173.12:3000/d/eede7d621l0qod/data-set?orgId=1",
+            "panels": ["한전FTP전송내역", "롯데FTP전송내역"]
+        }
+    }
+    
+def save_reports():
+    with open(REPORTS_FILE, "w", encoding="utf-8") as f:
+        json.dump(GRAFANA_REPORTS, f, indent=2, ensure_ascii=False)
+
+log_text = None
+def log(message):
+    global log_text
+    if log_text:
+        clean_message = re.sub(r'[^가-힣a-zA-Z0-9 .,=:/\\-_!@#$%^&*()+[]<>]','',message)
+        log_text.insert(tk.END, clean_message+ "\n")
+        log_text.see(tk.END)
+        log_text.update_idletasks()
+        print("[Debug] 로그 호출됨 :", message)
+
+day = datetime.now()
+in_days = int(day.strftime('%d'))
+in_base_date = (datetime.now() - relativedelta(days=1)).strftime('%Y%m%d')
+csv_file_path = TARGET_PANEL_TITLE+'_'+in_base_date+'.csv'
+default_excel_path = CSV_DOWNLOAD_DIR+'/'+TARGET_PANEL_TITLE+'_'+in_base_date+'.xlsx'
+
+def collect_grafana_inputs(log_callback):
+    def manage_reports():
+        report_window = tk.Toplevel()
+        report_window.transient(root) #메인창위쪽에 
+        report_window.grab_set()      #포커스
+        report_window.title("리포트 관리")
+        report_window.geometry("500x400")
+
+        listbox = tk.Listbox(report_window, font=("나눔고딕코딩", 10))
+        listbox.pack(fill="both", expand=True, padx=10, pady=10)
+        for key in GRAFANA_REPORTS:
+            listbox.insert(tk.END, key)
+
+        def refresh_list():
+            listbox.delete(0, tk.END)
+            if os.path.exists(REPORTS_FILE):
+                with open(REPORTS_FILE, "r", encoding="utf-8") as f:
+                    GRAFANA_REPORTS = json.load(f)
+            for k in GRAFANA_REPORTS:
+                listbox.insert(tk.END, k)
+
+        def add_report():
+            name = simple_input("리포트 이름 입력")
+            name = name.strip().replace('\u3000','').replace('\t','').replace('\n','')
+            if name and name not in GRAFANA_REPORTS:
+                GRAFANA_REPORTS[name] = {"url": "", "panels": []}
+                refresh_list()
+
+        # def edit_report():
+        #     idx = listbox.curselection()
+        #     if not idx:
+        #         return
+        #     name = listbox.get(idx)
+        #     url = simple_input("URL 입력", GRAFANA_REPORTS[name]["url"])
+        #     panels = simple_input("패널 목록 (쉼표 구분)", ", ".join(GRAFANA_REPORTS[name]["panels"]))
+        #     GRAFANA_REPORTS[name]["url"] = url
+        #     GRAFANA_REPORTS[name]["panels"] = [p.strip() for p in panels.split(",") if p.strip()]
+        def edit_report():
+            idx = listbox.curselection()
+            if not idx:
+                return
+            name = listbox.get(idx)
+
+            editor = tk.Toplevel(report_window)
+            editor.title(f"{name} 수정")
+            editor.geometry("500x200")
+
+            tk.Label(editor, text="URL:").pack(anchor="w", padx=10, pady=(10, 0))
+            url_var = tk.StringVar(value=GRAFANA_REPORTS[name]["url"])
+            tk.Entry(editor, textvariable=url_var, width=60).pack(padx=10)
+
+            tk.Label(editor, text="패널 목록 (쉼표 구분):").pack(anchor="w", padx=10, pady=(10, 0))
+            panels_var = tk.StringVar(value=", ".join(GRAFANA_REPORTS[name]["panels"]))
+            tk.Entry(editor, textvariable=panels_var, width=60).pack(padx=10)
+
+            def save():
+                GRAFANA_REPORTS[name]["url"] = url_var.get().strip()
+                GRAFANA_REPORTS[name]["panels"] = [p.strip() for p in panels_var.get().split(",") if p.strip()]
+                editor.destroy()
+
+            tk.Button(editor, text="저장", command=save).pack(pady=10)
+            editor.transient(report_window)
+            editor.grab_set()
+            
+        def delete_report():
+            idx = listbox.curselection()
+            if not idx:
+                return
+            name = listbox.get(idx)
+            if messagebox.askyesno("삭제 확인", f"리포트 '{name}'을 삭제할까요?"):
+                del GRAFANA_REPORTS[name]
+                refresh_list()
+
+        def save_and_close():
+            save_reports()
+            report_window.destroy()
+            refresh_list()
+
+        def simple_input(prompt, default=""):
+            input_win = tk.Toplevel()
+            input_win.title(prompt)
+            input_var = tk.StringVar(value=default)
+            tk.Entry(input_win, textvariable=input_var, width=60).pack(padx=10, pady=10)
+            tk.Button(input_win, text="확인", command=input_win.destroy).pack(pady=5)
+            input_win.grab_set()
+            input_win.wait_window()
+            return input_var.get()
+
+        btn_frame = tk.Frame(report_window)
+        btn_frame.pack(pady=5)
+        tk.Button(btn_frame, text="추가", command=add_report).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="수정", command=edit_report).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="삭제", command=delete_report).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="저장 및 닫기", command=save_and_close).pack(side="right", padx=5)
+    def on_report_select(*args):
+        selected = report_var.get()
+        url_entry.delete(0, tk.END)
+        url_entry.insert(0, GRAFANA_REPORTS[selected]["url"])
+        panel_menu['menu'].delete(0, 'end')
+        new_panels = GRAFANA_REPORTS[selected]["panels"]
+        panel_vars.set(new_panels[0])
+        for panel in new_panels:
+            panel_menu['menu'].add_command(label=panel, command=tk._setit(panel_vars, panel))
+    def on_submit():
+        url = url_entry.get().strip()
+        user = user_entry.get().strip()
+        password = password_entry.get().strip()
+        #panels_raw = panel_vars.get("1.0", tk.END).strip()
+        #panel_list = [p.strip() for p in panels_raw.split(",") if p.strip()]
+        select_panel = panel_vars.get().strip()
+        folder = download_path.get().strip()
+
+        if not url or not user or not password or not select_panel:
+            messagebox.showerror("입력 오류", "모든 필드를 채워주세요.")
+            return
+
+        # 저장 후 종료
+        inputs["url"] = url
+        inputs["user"] = user
+        inputs["password"] = password
+        inputs["panels"] = [select_panel]
+        inputs["folder"] = folder
+        #root.destroy()
+        download_dir = folder if folder else DEFAULT_DIR
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        report_name=report_var.get()
+        log(f"대상대시보드 : {report_name} ")
+        log(f"페        널 : {select_panel} ")
+        log(f"다운로드경로 : {download_dir}")
+        import threading
+        threading.Thread(target=download_grafana_panels, kwargs={
+            "GRAFANA_URL": url,
+            "GRAFANA_USER": user,
+            "GRAFANA_PASS": password,
+            "TARGET_PANEL_TITLES": [select_panel],
+            "CSV_DOWNLOAD_DIR": download_dir,
+            "log": log
+        }).start()
+
+    def browse_folder():
+        folder_select = filedialog.askdirectory()
+        if folder_select:
+            download_path.set(folder_select)
+    
+    
+    inputs = {}
+    root = tk.Toplevel() # Toplevel()
+    root.title("Grafana 패널 다운로드 설정")
+    root.resizable(False, False)
+    root.configure(bg="#f4f4f8")
+
+    font_style = ("나눔고딕코딩", 10)
+    label_fg = "#333"
+    bg_colr="#f4f4f8"
+    row_count=1
+
+    # tk.Label(root, text="리포트 선택", bg=bg_colr, fg=label_fg, font=font_style).grid(row=row_count, column=0, sticky="w")
+    # report_var = tk.StringVar(value=list(GRAFANA_REPORTS.keys())[0])
+    # report_menu = tk.OptionMenu(root, report_var, *GRAFANA_REPORTS.keys(), command=on_report_select)
+    # report_menu.config(font=font_style)
+    # report_menu.grid(row=row_count, column=1, columnspan=2, sticky="w")
+    
+    tk.Label(root, text="리포트 선택", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=row_count, column=0, sticky="w", padx=(0,5), pady=(10,0)) #.grid(row=row_count, column=1, sticky="w", padx=(10,5), pady=(10,0))
+    report_var = tk.StringVar(value=list(GRAFANA_REPORTS.keys())[0])
+    report_menu = tk.OptionMenu(root, report_var, *GRAFANA_REPORTS.keys(), command=on_report_select)
+    report_menu.config(font=font_style)
+    report_menu.grid(row=row_count, column=1,  sticky="w", padx=(5,5),pady=(10,0)) #columnspan=2,
+    tk.Label(root, text="메뉴파일(reports.json)", bg="#f4f4f8", fg=label_fg, font=font_style).grid(row=row_count, column=2, sticky="e", padx=(5,5),pady=(10,0))
+    tk.Button(root, text="✏️ 관리", command=manage_reports, font=font_style).grid(row=row_count, column=3, sticky="w", padx=(5,10), pady=(10,0))
+
+    row_count += 1
+    tk.Label(root, text="Grafana 대시보드 URL", bg=bg_colr, fg=label_fg, font=font_style).grid(row=row_count, column=0, sticky="w")
+    url_entry = tk.Entry(root, width=70, font=font_style)
+    url_entry.grid(row=row_count, column=1, columnspan=3, sticky="w") #컬럼을 3개 차지하도록
+    #url_entry.insert(0, GRAFANA_URL)
+    url_entry.insert(0, GRAFANA_REPORTS[report_var.get()]["url"])
+
+    row_count += 1
+    tk.Label(root, text="사용자 ID", bg=bg_colr, fg=label_fg, font=font_style).grid(row=row_count, column=0, sticky="w")
+    user_entry = tk.Entry(root, width=30)
+    user_entry.insert(0, "a91144747")
+    user_entry.grid(row=row_count, column=1, sticky="w")
+
+    row_count += 1
+    tk.Label(root, text="비밀번호", bg=bg_colr, fg=label_fg, font=font_style).grid(row=row_count, column=0, sticky="w")
+    password_entry = tk.Entry(root, width=30, show="*")
+    password_entry.insert(0, "New1234!")
+    password_entry.grid(row=row_count, column=1, sticky="w")
+
+    row_count += 1
+    #tk.Label(root, text="패널 제목 목록 (쉼표로 구분)").grid(row=3, column=0, sticky="nw")
+    #panels_text = tk.Text(root, width=60, height=4)
+    #panels_text.grid(row=3, column=1, pady=5)
+    #tk.Label(root, text="패널 선택").grid(row=3, column=0, sticky="nw")
+    #panel_vars = {}
+    #for i, panel in enumerate(panel_list):
+    #    var = tk.BooleanVar()
+    #    chk = tk.Checkbutton(root, text=panel, variable=var)
+    #    chk.grid(row=3+i, column=1, sticky="w")
+    #    panel_vars[panel]=var
+    #panel_list = [ "한전FTP전송내역","롯데FTP전송내역"]
+    tk.Label(root, text="패널 선택", bg=bg_colr, fg=label_fg, font=font_style).grid(row=row_count, column=0, sticky="w")
+    #panel_vars = tk.StringVar(value=panel_list[0])
+    panel_vars = tk.StringVar(value=GRAFANA_REPORTS[report_var.get()]["panels"][0])
+    panel_menu = tk.OptionMenu(root, panel_vars, *GRAFANA_REPORTS[report_var.get()]["panels"])
+    panel_menu.config(font=font_style)
+    panel_menu.grid(row=row_count, column=1, columnspan=2, sticky="w")
+
+    row_count += 1
+    tk.Label(root, text="다운로드저장경로", bg=bg_colr, fg=label_fg, font=font_style).grid(row=row_count, column=0, sticky="w")
+    download_path = tk.StringVar()
+    path_frame = tk.Frame(root)
+    path_frame.grid(row=row_count, column=1, columnspan=2, sticky="w")
+    path_entry = tk.Entry(path_frame, textvariable=download_path, width=40)
+    path_entry.insert(0,DEFAULT_DIR )
+    #path_entry.grid(row=4,column=1, sticky="w")
+    path_entry.pack(side="left")
+    browse_btn = tk.Button(path_frame, text="찾아보기",command=browse_folder)
+    #browse_btn.grid(row=4,column=2, sticky="w")
+    browse_btn.pack(side="left", padx=5)
+
+    row_count += 1
+    submit_btn = tk.Button(root, text="다운로드시작", command=on_submit, font=("나눔고딕코딩", 10, "bold"), bg="#4CAF50", fg="white")
+    submit_btn.grid(row=row_count, column=2, pady=10, sticky="e")
+    import sys
+    #cancel_btn = tk.Button(root, text="취소", command=root.destroy, font=("맑은 고딕", 10, "bold"), bg="#f44336", fg="white")
+    cancel_btn = tk.Button(root, text="취소", command=lambda: sys.exit(0), font=("나눔고딕코딩", 10, "bold"), bg="#f44336", fg="white")
+    cancel_btn.grid(row=row_count, column=1, pady=10, sticky="w")
+    
+    row_count += 1
+    global log_text
+    log_text = tk.Text(root, height=20, width=100, font=("나눔고딕코딩", 9), fg="#9cdcfe", bg="#1e1e1e", insertbackground="#9cdcfe")
+    log_text.grid(row=row_count, column=0, columnspan=4, padx=0, pady=10)
+
+    root.protocol("WM_DELETE_WINDOW", lambda: sys.exit(0))
+    root.grab_set()
+    root.mainloop()
+    return inputs if inputs else None, log
+
+
+def get_unique_filename(base_dirname, base_filename):
+    filename, fileext = os.path.splitext(base_filename)
+    candidate = os.path.join(base_dirname, base_filename)
+    counter = 1
+    while os.path.exists(candidate):
+        candidate = os.path.join(base_dirname, f"{filename}_{counter}{fileext}")
+        counter += 1
+    return candidate
+    
+    
+def rename_latest_csv(download_dir, base_filename):
+    # 다운로드 디렉토리에서 가장 최근 .csv 파일 찾기
+    list_of_files = glob.glob(os.path.join(download_dir, "*.csv"))
+    if not list_of_files:
+        print("❌ CSV 파일 없음!")
+        return None
+
+    latest_file = max(list_of_files, key=os.path.getctime)
+    #new_path = os.path.join(download_dir, base_filename)
+    new_path = get_unique_filename(download_dir, base_filename)
+    os.rename(latest_file, new_path)
+    log(f"다운로드한 파일명 : {os.path.basename(latest_file)}")
+    log(f"변경한     파일명 : {new_path}")
+    return new_path
+
+def save_csv_to_excel(csv_file_path):
+    print("변환할CSV파일:"+csv_file_path)
+    #df = pd.read_csv(csv_file_path, low_memory=False, dtype=str)
+    df = pd.read_csv(csv_file_path, low_memory=False, index_col=None)
+    #df = df.apply(pd.to_numeric, error='ignore')
+    print("📄\n CSV 로드 완료:"+ csv_file_path)
+    print( df.head())
+    excel_file_path = os.path.splitext(csv_file_path)[0]+".xlsx"
+    print("변환할엑셀파일:"+ os.path.splitext(csv_file_path)[0])
+    print("변환할엑셀파일:"+ CSV_DOWNLOAD_DIR+'/'+os.path.splitext(csv_file_path)[0]+".xlsx")
+    if os.path.exists(excel_file_path):
+        os.remove(excel_file_path)
+    # Excel 저장
+    df.to_excel(excel_file_path, index=False, engine="openpyxl")
+    #print(f"엑셀 저장 완료: {excel_file_path}")
+    print(f"📊 엑셀 저장 완료: {excel_file_path}")
+    log(f"엑셀 저장 완료: {excel_file_path}")
+    messagebox.showinfo("완료", f"엑셀 저장 완료: {excel_file_path}")
+    
+# 📁 다운로드 폴더 생성
+if not os.path.exists(CSV_DOWNLOAD_DIR):
+    os.makedirs(CSV_DOWNLOAD_DIR)
+
+def download_grafana_panels(GRAFANA_URL, GRAFANA_USER, GRAFANA_PASS, TARGET_PANEL_TITLES, CSV_DOWNLOAD_DIR, log):
+    # 🧙 크롬 옵션 설정
+    chrome_options = Options()
+    #chrome_options.add_argument("--headless")
+    chrome_options.add_experimental_option("prefs", {
+        "download.default_directory": os.path.abspath(CSV_DOWNLOAD_DIR),
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "safebrowsing.enabled": True
+    })
+
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        # 1️⃣ 로그인
+        log("URL 접속중 ... ")
+        driver.get(GRAFANA_URL)
+        time.sleep(2)
+
+        log("로그인중 ... ")
+        driver.find_element(By.NAME, "user").send_keys(GRAFANA_USER)
+        driver.find_element(By.NAME, "password").send_keys(GRAFANA_PASS)
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+        time.sleep(3)
+
+        # 2️⃣ 대시보드 재진입
+        log("대시보드 진입 및 대기중 ... ")
+        driver.get(GRAFANA_URL)
+        time.sleep(5)
+
+        for TARGET_PANEL in TARGET_PANEL_TITLES:
+            try:
+                panel_found = False
+                #last_height = driver.execute_script("return document.body.scrollHeight")
+                last_height = driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        return container.scrollHeight;
+    } else {
+        return document.body.scrollHeight;
+    }
+""")
+
+                while True:
+                    try:
+                        # 3️⃣ 정확한 data-testid로 section 찾기
+                        log("대상 패널 찾는중 ... ")
+                        selector = f'section[data-testid*="Panel header {TARGET_PANEL}"]'
+                        section = driver.find_element(By.CSS_SELECTOR, selector)
+                        log("대상 패널 찾음 : " + TARGET_PANEL)
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", section)
+                        time.sleep(0.5)
+                        # 4️⃣ 해당 section 내부에서 메뉴 버튼 클릭
+                        menu_button = section.find_element(By.CSS_SELECTOR, f'button[data-testid*="Panel menu {TARGET_PANEL}"]')
+                        driver.execute_script("arguments[0].click();", menu_button)
+                        time.sleep(1)
+                        inspect_button = driver.find_element(By.XPATH, "//span[text()='Inspect']")
+                        driver.execute_script("arguments[0].click();", inspect_button)
+                        time.sleep(1)
+                        # 5️⃣ 'Download CSV' 메뉴 클릭
+                        csv_button = driver.find_element(By.XPATH, "//span[text()='Download CSV']")
+                        driver.execute_script("arguments[0].click();", csv_button)
+                        log(f"패널[{TARGET_PANEL}] CSV 다운로드 완료")
+                        time.sleep(5)
+                        # 다운로드 후 파일명 변경
+                        csv_file_path = TARGET_PANEL+'_'+in_base_date+'.csv'
+                        renamed_csv_file_path = rename_latest_csv(CSV_DOWNLOAD_DIR, csv_file_path)
+                        # Pandas로 읽고 엑셀 저장
+                        if renamed_csv_file_path:
+                            save_csv_to_excel(renamed_csv_file_path)
+                        panel_found = True
+                        break
+                    except:
+                        #못찾았을경우 , 화면을 아래로 스크롤해서 다시 찾는다.
+                        log("대상 패널 못찾음 : 화면을 스크롤해서 다시 검색중..")
+                        driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        container.scrollTop += 400;
+        return container.scrollTop;
+    } else {
+        window.scrollBy(0, 400);
+        return window.pageYOffset;
+    }
+""")
+                        time.sleep(0.5)
+                        new_height = driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        return container.scrollTop + container.clientHeight;
+    } else {
+        return window.pageYOffset + window.innerHeight;
+    }
+""")
+                        #driver.execute_script("window.scrollBy(0, 400);")
+                        #time.sleep(0.5)
+                        #new_height = driver.execute_script("return window.pageYOffset + window.innerHeight")
+                        if new_height >= last_height:
+                            break
+                if not panel_found:
+                    log(f"❌ [{TARGET_PANEL}] 패널을 찾을 수 없습니다.")
+            except Exception as e:
+                #log(f"[{TARGET_PANEL}] 패널 오류 발생:"+ e)
+                print(f"❌ [{TARGET_PANEL}] 패널 오류 발생:", e)
+    except Exception as e:
+        #log("오류 발생:"+ e)
+        print("❌ 오류 발생:", e)
+
+    finally:
+        print("끝~")
+        #driver.quit()
+        
+
+# 메인 실행
+#while True:
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.withdraw()
+    
+    result = collect_grafana_inputs(log_callback=None)
+    import threading
+
+    if result:
+        user_inputs, log = result
+        if user_inputs:
+            download_dir = user_inputs["folder"] if user_inputs["folder"] else DEFAULT_DIR
+            if not os.path.exists(download_dir):
+                os.makedirs(download_dir)
+
+            threading.Thread(target=download_grafana_panels, kwargs={
+                "GRAFANA_URL": user_inputs["url"],
+                "GRAFANA_USER": user_inputs["user"],
+                "GRAFANA_PASS": user_inputs["password"],
+                "TARGET_PANEL_TITLES": user_inputs["panels"],
+                "CSV_DOWNLOAD_DIR": download_dir,
+                "log":log
+            }).start()
+            # download_grafana_panels(
+            #     GRAFANA_URL=user_inputs["url"],
+            #     GRAFANA_USER=user_inputs["user"],
+            #     GRAFANA_PASS=user_inputs["password"],
+            #     TARGET_PANEL_TITLES=user_inputs["panels"],
+            #     CSV_DOWNLOAD_DIR=download_dir,
+            #     log=log
+            # )
+        else:
+            print("❌ 입력 취소 또는 오류")
+            #break
