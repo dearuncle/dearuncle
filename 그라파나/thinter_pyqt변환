@@ -551,3 +551,33 @@ self.setStyleSheet("""
 * 테마: 자동 다크모드 적용
 
 👉 원하시면 바로 제작해드릴게요. 어떤 구조를 원하시는지 간단히 말씀해주세요!
+
+
+
+`📄 grafana_ui.ui` 파일이 준비되었습니다!
+
+👉 [📥 여기에서 다운로드](sandbox:/mnt/data/grafana_advanced_ui/grafana_ui.ui)
+
+---
+
+### ✅ 이 UI 파일은 다음 기능을 포함합니다:
+
+| 구성 요소                        | 설명                                |
+| ---------------------------- | --------------------------------- |
+| 🔽 comboReport               | 리포트 목록 (reports.json 기반)          |
+| ✏️ btnManageReports          | 리포트 편집 버튼 (팝업에서 추가/수정/삭제 가능)      |
+| 🌐 inputURL                  | Grafana 대시보드 URL 입력               |
+| 👤 inputUser / inputPassword | 사용자 ID 및 비밀번호 입력                  |
+| 📋 comboPanel                | 선택할 패널 목록                         |
+| 🔄 btnRefreshPanels          | URL 기반으로 Grafana API에서 패널 목록 불러오기 |
+| 📁 inputFolder + btnBrowse   | CSV 저장 경로 선택                      |
+| ▶ btnStart / ❌ btnExit       | 실행 및 종료                           |
+| 📜 textLog                   | 로그 출력 영역                          |
+
+---
+
+다음 단계로는 이 `.ui` 파일을 `pyuic5`로 변환하여 PyQt5 앱과 연결하고,
+각 버튼 기능을 구현한 전체 프로젝트 ZIP 파일로 만들어드리겠습니다.
+
+곧 완성본도 함께 전달드릴게요!
+
