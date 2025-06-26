@@ -1,0 +1,553 @@
+네, 이 코드는 **tkinter 기반 UI**로 사용자 입력을 수집하고 로그를 출력하는 구조인데, **PyQt5로 변환** 가능합니다.
+아래는 구조적으로 핵심 UI 요소를 PyQt5로 재구성한 예시입니다.
+
+---
+
+## ✅ PyQt5로 변환 시 고려사항
+
+| 항목           | tkinter                     | PyQt5                                  |
+| ------------ | --------------------------- | -------------------------------------- |
+| 메인 윈도우       | `tk.Tk()`                   | `QMainWindow`, `QDialog`, 또는 `QWidget` |
+| Label, Entry | `Label`, `Entry`            | `QLabel`, `QLineEdit`                  |
+| 버튼           | `Button`                    | `QPushButton`                          |
+| 옵션 선택        | `OptionMenu`, `StringVar`   | `QComboBox`                            |
+| 로그 출력        | `Text`                      | `QTextEdit`                            |
+| 폴더 선택        | `filedialog.askdirectory()` | `QFileDialog.getExistingDirectory()`   |
+| 메시지 박스       | `messagebox.showinfo()`     | `QMessageBox.information()`            |
+
+---
+
+## ✅ 예시: `collect_grafana_inputs()` 를 PyQt5로 간단히 구현
+
+```python
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton,
+    QFileDialog, QComboBox, QTextEdit, QHBoxLayout, QMessageBox
+)
+import sys
+
+class GrafanaInputUI(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Grafana 패널 다운로드 설정")
+        self.setGeometry(100, 100, 600, 400)
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        # URL 입력
+        self.url_input = QLineEdit("http://your-default-url")
+        layout.addWidget(QLabel("Grafana 대시보드 URL"))
+        layout.addWidget(self.url_input)
+
+        # 사용자명
+        self.user_input = QLineEdit("a91144747")
+        layout.addWidget(QLabel("사용자 ID"))
+        layout.addWidget(self.user_input)
+
+        # 비밀번호
+        self.pass_input = QLineEdit("New1234!")
+        self.pass_input.setEchoMode(QLineEdit.Password)
+        layout.addWidget(QLabel("비밀번호"))
+        layout.addWidget(self.pass_input)
+
+        # 패널 선택
+        self.panel_combo = QComboBox()
+        self.panel_combo.addItems(["한전FTP전송내역", "롯데FTP전송내역"])  # 패널은 동적 구성도 가능
+        layout.addWidget(QLabel("패널 선택"))
+        layout.addWidget(self.panel_combo)
+
+        # 다운로드 경로
+        self.folder_input = QLineEdit("D:/temp2/grafana_csv")
+        browse_btn = QPushButton("찾아보기")
+        browse_btn.clicked.connect(self.browse_folder)
+        folder_layout = QHBoxLayout()
+        folder_layout.addWidget(self.folder_input)
+        folder_layout.addWidget(browse_btn)
+        layout.addWidget(QLabel("다운로드 저장 경로"))
+        layout.addLayout(folder_layout)
+
+        # 실행 버튼
+        run_btn = QPushButton("다운로드 시작")
+        run_btn.clicked.connect(self.on_submit)
+        layout.addWidget(run_btn)
+
+        # 로그 출력
+        self.log_output = QTextEdit()
+        self.log_output.setReadOnly(True)
+        layout.addWidget(QLabel("로그"))
+        layout.addWidget(self.log_output)
+
+        self.setLayout(layout)
+
+    def browse_folder(self):
+        folder = QFileDialog.getExistingDirectory(self, "저장할 폴더 선택")
+        if folder:
+            self.folder_input.setText(folder)
+
+    def on_submit(self):
+        url = self.url_input.text()
+        user = self.user_input.text()
+        password = self.pass_input.text()
+        panel = self.panel_combo.currentText()
+        folder = self.folder_input.text()
+
+        if not url or not user or not password or not folder:
+            QMessageBox.warning(self, "오류", "모든 항목을 입력해주세요.")
+            return
+
+        self.log_output.append(f"▶ 대시보드 URL: {url}")
+        self.log_output.append(f"▶ 패널: {panel}")
+        self.log_output.append(f"▶ 경로: {folder}")
+
+        # 여기에 download_grafana_panels 호출 가능
+        # 예: threading.Thread(...).start()
+
+def run_gui():
+    app = QApplication(sys.argv)
+    win = GrafanaInputUI()
+    win.show()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    run_gui()
+```
+
+---
+
+## ✅ 이후 해야 할 작업
+
+1. 기존 tkinter 기반 함수들을 `PyQt5`로 마이그레이션:
+
+   * `messagebox` → `QMessageBox`
+   * `Text` → `QTextEdit`
+   * `OptionMenu`, `StringVar` → `QComboBox`
+2. `collect_grafana_inputs`처럼 값을 dict로 리턴하도록 조정 가능
+3. `log()` 함수 PyQt5용으로 교체 (`self.log_output.append()`)
+
+---
+
+원하시면 전체 코드 마이그레이션을 순차적으로 해드릴 수도 있고, GUI 레이아웃을 `.ui` 파일로 Qt Designer에서 설계한 뒤 `PyQt5` 코드로 연결하는 방법도 안내해 드릴 수 있습니다.
+이런 구조로 괜찮을지, 전체 변환을 원하시는지 알려주세요!
+
+
+좋아요! 전체 PyQt5 마이그레이션과 Qt Designer 기반 GUI 설계 및 코드 연동 방식을 순서대로 안내드릴게요.
+
+---
+
+## ✅ 마이그레이션 및 Designer 연동 개요
+
+| 단계  | 내용                               |
+| --- | -------------------------------- |
+| 1단계 | Qt Designer에서 `.ui` 파일로 UI 설계    |
+| 2단계 | `pyuic5`를 이용해 `.ui → .py` 코드로 변환 |
+| 3단계 | 기존 tkinter 코드를 PyQt5 구조로 옮김      |
+| 4단계 | 백엔드 기능(셀레니움, 다운로드, 로깅 등)과 UI 연동  |
+
+---
+
+## ✅ 1단계: Qt Designer로 UI 설계
+
+### 💡 Designer에서 필요한 요소
+
+| 항목             | 구성 요소                       | Qt 위젯 |
+| -------------- | --------------------------- | ----- |
+| 대시보드 URL 입력    | `QLabel` + `QLineEdit`      |       |
+| 사용자 ID / PW 입력 | `QLineEdit` (password 설정)   |       |
+| 리포트 선택         | `QComboBox`                 |       |
+| 패널 선택          | `QComboBox`                 |       |
+| 다운로드 경로        | `QLineEdit` + `QPushButton` |       |
+| 로그 출력창         | `QTextEdit`                 |       |
+| 실행 / 종료 버튼     | `QPushButton` 두 개           |       |
+
+### ➕ 저장 예
+
+* 이름: `grafana_ui.ui`
+* 저장 시 `*.ui` 파일로 저장
+
+---
+
+## ✅ 2단계: UI 파일을 PyQt 코드로 변환
+
+```bash
+pyuic5 -x grafana_ui.ui -o grafana_ui.py
+```
+
+> ✅ `pyuic5`는 PyQt5 설치 시 포함되어 있으며, 명령어 실행 후 `grafana_ui.py` 파일이 생성됩니다.
+
+---
+
+## ✅ 3단계: PyQt5 연동 예제 코드 구성
+
+### 🔧 구조 예시
+
+```python
+# main.py
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
+from grafana_ui import Ui_MainWindow  # UI 연결 파일
+import threading
+from your_backend import download_grafana_panels  # 기존 selenium 기능 모듈화
+
+class GrafanaApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        # 이벤트 연결
+        self.ui.btnBrowse.clicked.connect(self.browse_folder)
+        self.ui.btnStart.clicked.connect(self.start_download)
+        self.ui.btnExit.clicked.connect(self.close)
+
+    def log(self, message):
+        self.ui.textLog.append(message)
+
+    def browse_folder(self):
+        folder = QFileDialog.getExistingDirectory(self, "저장 폴더 선택")
+        if folder:
+            self.ui.inputFolder.setText(folder)
+
+    def start_download(self):
+        url = self.ui.inputURL.text()
+        user = self.ui.inputUser.text()
+        pw = self.ui.inputPassword.text()
+        panel = self.ui.comboPanel.currentText()
+        folder = self.ui.inputFolder.text()
+
+        if not url or not user or not pw or not panel:
+            QMessageBox.warning(self, "입력 오류", "모든 입력 필드를 확인하세요.")
+            return
+
+        self.log(f"▶ URL: {url}")
+        self.log(f"▶ 패널: {panel}")
+        self.log(f"▶ 저장경로: {folder}")
+
+        # 다운로드 스레드 실행
+        threading.Thread(target=download_grafana_panels, kwargs={
+            "GRAFANA_URL": url,
+            "GRAFANA_USER": user,
+            "GRAFANA_PASS": pw,
+            "TARGET_PANEL_TITLES": [panel],
+            "CSV_DOWNLOAD_DIR": folder,
+            "log": self.log
+        }).start()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = GrafanaApp()
+    window.show()
+    sys.exit(app.exec_())
+```
+
+---
+
+## ✅ 4단계: 기존 백엔드 연결 방식
+
+* 기존 `download_grafana_panels()` 함수와 관련 로직은 그대로 사용
+* 단, tkinter 관련 부분은 제거하고, `log()` 함수는 위처럼 `self.log()` 형태로 전달
+* 팝업 메시지 (`messagebox.showinfo`)는 PyQt5의 `QMessageBox.information()`으로 교체
+
+---
+
+## ✅ 결과 구조 예시
+
+```
+grafana_downloader/
+├── grafana_ui.ui             # Qt Designer로 만든 UI 파일
+├── grafana_ui.py             # pyuic5로 변환한 PyQt5 UI 코드
+├── main.py                   # PyQt5 메인 앱 진입점
+├── your_backend.py           # 기존 다운로드/CSV/Excel 처리 로직
+├── reports.json              # 리포트 설정 저장파일
+└── ...
+```
+
+---
+
+## ✅ 추가로 도와드릴 수 있는 것
+
+* Qt Designer로 `.ui` 설계 예제 파일 직접 만들어드리기
+* PyInstaller로 `.exe`로 빌드하는 법
+* 다국어/한글 폰트 적용법
+* GUI 상태에 따라 버튼 비활성화 처리 등 UX 개선
+
+---
+좋습니다! 아래는 지금까지 작업 내용을 다시 정리한 체크리스트입니다:
+
+---
+
+### ✅ 완료된 작업
+
+* [x] PyQt5 기반 Grafana 패널 다운로드 도구 전체 코드 구조화 (`grafana_downloader.zip`)
+* [x] PyQt5 UI 구성 요소를 Qt Designer에서 수정 가능한 `.ui` 원본 파일 제공 (`grafana_ui.ui`)
+* [x] Selenium + Pandas를 활용한 CSV → Excel 자동 변환 기능 포함
+* [x] UI와 로직 간 스레드 연동 및 로그 출력 구조 구현
+
+---
+
+### ✅ 사용 가이드
+
+| 작업       | 방법                                           |
+| -------- | -------------------------------------------- |
+| 실행       | `python -m grafana_downloader.main`          |
+| `.ui` 수정 | Qt Designer로 `grafana_ui.ui` 열기              |
+| 코드로 변환   | `pyuic5 grafana_ui.ui -o ui_grafana.py`      |
+| 필요 패키지   | `pip install PyQt5 selenium pandas openpyxl` |
+| 실행파일 만들기 | 요청 시 `PyInstaller` 설정 제공 가능                  |
+
+---
+
+### 💡 다음 단계 추천
+
+* 필요한 기능 추가 (예: 다중 패널, 기간 설정, 자동 스케줄링 등)
+* 실행파일 `.exe`로 배포 패키징
+* 패널 리스트를 실시간으로 불러오는 기능 (Grafana API 활용)
+
+---
+
+궁금한 점이나 다음 작업이 있다면 언제든지 말씀 주세요!
+도움이 더 필요하시면 “실행파일 만들기”, “리포트 관리 기능 추가” 같은 키워드만 주셔도 바로 도와드릴게요. 😊
+
+
+----
+
+
+좋습니다! 이제부터 **Qt Designer를 활용한 `.ui` 수정 방법**과
+**고급 PyQt5 기능들**인 `다중 탭`, `테이블 추가`, `설정 저장` 등을 하나씩 소개해드릴게요.
+
+---
+
+## ✅ 1. `.ui` 파일 수정 방법 (기본 사용법)
+
+### 📌 준비
+
+* Qt Designer 설치: `pip install pyqt5-tools` 후 `pyqt5designer` 명령어로 실행
+* 또는 공식 Qt 설치 시 포함됨 (`designer.exe`)
+
+### ✍️ 수정 절차
+
+1. `grafana_ui.ui` 파일 열기
+2. 원하는 위젯 (예: QTabWidget, QTableWidget 등)을 드래그해 추가
+3. 위젯의 이름(`objectName`)과 속성(텍스트, 레이아웃)을 오른쪽에서 설정
+4. 저장 후 다음 명령어로 `.py`로 변환:
+
+   ```bash
+   pyuic5 grafana_ui.ui -o ui_grafana.py
+   ```
+
+---
+
+## ✅ 2. 다중 탭 (QTabWidget)
+
+### 🎯 목표
+
+* “설정” 탭과 “로그” 탭 등으로 나누어 **UI를 깔끔하게 분리**
+
+### 💡 Qt Designer 사용법
+
+1. 왼쪽 위젯 창에서 **QTabWidget** 드래그하여 추가
+2. 탭 안에 각종 `QLabel`, `QLineEdit`, `QComboBox` 등을 넣고 구성
+3. 각 탭의 이름을 더블클릭하여 `기본`, `로그`, `고급` 등으로 변경 가능
+
+---
+
+## ✅ 3. 테이블 추가 (QTableWidget)
+
+### 🎯 목표
+
+* 패널 목록을 **표 형식**으로 보여주거나, 여러 CSV 내역을 목록으로 표현
+
+### 💡 사용법
+
+1. Qt Designer에서 `QTableWidget` 드래그
+2. 우클릭 → `속성 편집` → 행/열 개수 지정
+3. 코드에서 다음처럼 데이터 삽입 가능:
+
+   ```python
+   self.ui.tableWidget.setRowCount(3)
+   self.ui.tableWidget.setItem(0, 0, QTableWidgetItem("한전FTP"))
+   self.ui.tableWidget.setItem(0, 1, QTableWidgetItem("성공"))
+   ```
+
+---
+
+## ✅ 4. 설정 저장/불러오기 (QSettings)
+
+### 🎯 목표
+
+* URL, 사용자 ID 등 이전에 입력한 값을 자동 저장/복원
+
+### 💡 코드 예시
+
+```python
+from PyQt5.QtCore import QSettings
+
+# 저장
+settings = QSettings("MyCompany", "GrafanaDownloader")
+settings.setValue("url", self.ui.inputURL.text())
+settings.setValue("user", self.ui.inputUser.text())
+
+# 불러오기
+self.ui.inputURL.setText(settings.value("url", ""))
+self.ui.inputUser.setText(settings.value("user", ""))
+```
+
+> 저장 위치는 OS별로 자동 관리됩니다 (윈도우는 레지스트리, mac은 plist 등)
+
+---
+
+## ✅ 추가적으로 구현 가능한 고급 기능들
+
+| 기능                | 설명                                           |
+| ----------------- | -------------------------------------------- |
+| ⏱ 자동 실행 예약        | 일정 시간마다 CSV 다운 (QTimer or Task Scheduler 연동) |
+| 🔌 Grafana API 연동 | 패널 리스트를 API로 가져오기 (Grafana REST API 사용)      |
+| 💾 설정 템플릿 저장      | 여러 설정을 json으로 저장/불러오기                        |
+| 🌙 다크모드 UI        | 스타일시트(`.setStyleSheet`)로 테마 적용 가능            |
+
+---
+
+필요한 기능을 하나씩 요청 주시면 Qt Designer 수정 예제 + 코드 연동까지 모두 도와드릴게요.
+예: “다중 탭으로 로그창을 분리해주세요”, “테이블로 패널 목록 보여주세요” 등 어떤 것이든 가능합니다!
+
+좋습니다! 요청하신 4가지 고급 기능에 대해 각각 **예제 코드와 함께 차근차근 설명**드릴게요.
+
+---
+
+## ① ⏱ 자동 실행 예약 (QTimer)
+
+### 🔧 기능
+
+* 일정 간격(예: 10분)에 한 번씩 자동으로 Grafana에서 CSV 다운로드
+
+### ✅ 코드 예시 (PyQt5)
+
+```python
+from PyQt5.QtCore import QTimer
+
+# QTimer 설정
+self.timer = QTimer(self)
+self.timer.setInterval(10 * 60 * 1000)  # 10분 (ms 단위)
+self.timer.timeout.connect(self.start_download)
+self.timer.start()
+```
+
+> `self.start_download`는 기존 수동 다운로드 함수 그대로 사용 가능
+> UI에 “자동 실행 시작/중지” 토글 버튼 추가하면 더욱 편리
+
+---
+
+## ② 🔌 Grafana REST API로 패널 목록 불러오기
+
+### 🧩 기능
+
+* Grafana 대시보드의 panel title 목록을 **자동으로 가져와서 콤보박스에 표시**
+
+### ✅ Grafana API 호출 예시
+
+```python
+import requests
+
+def fetch_panel_titles(grafana_url, auth):
+    uid = grafana_url.split('/d/')[1].split('?')[0]  # UID 추출
+    api_url = f"http://{auth[0]}:{auth[1]}@10.220.173.12:3000/api/dashboards/uid/{uid}"
+
+    response = requests.get(api_url)
+    data = response.json()
+    panels = []
+
+    for panel in data['dashboard']['panels']:
+        panels.append(panel['title'])
+
+    return panels
+```
+
+### 📌 사용 예시
+
+```python
+panels = fetch_panel_titles(grafana_url, (username, password))
+self.ui.comboPanel.clear()
+self.ui.comboPanel.addItems(panels)
+```
+
+---
+
+## ③ 💾 설정 템플릿 저장 및 불러오기 (json)
+
+### 🎯 기능
+
+* 여러 사용자 설정 조합을 저장해 두고 **재사용 가능**하게 함 (예: 리포트 템플릿)
+
+### ✅ 저장 예시
+
+```python
+import json
+
+config = {
+    "url": self.ui.inputURL.text(),
+    "user": self.ui.inputUser.text(),
+    "password": self.ui.inputPassword.text(),
+    "panel": self.ui.comboPanel.currentText(),
+    "folder": self.ui.inputFolder.text()
+}
+
+with open("my_template.json", "w", encoding="utf-8") as f:
+    json.dump(config, f, indent=2)
+```
+
+### ✅ 불러오기 예시
+
+```python
+with open("my_template.json", "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+self.ui.inputURL.setText(config["url"])
+self.ui.inputUser.setText(config["user"])
+self.ui.inputPassword.setText(config["password"])
+self.ui.inputFolder.setText(config["folder"])
+self.ui.comboPanel.setCurrentText(config["panel"])
+```
+
+---
+
+## ④ 🌙 다크모드 UI (스타일시트)
+
+### ✅ 코드 예시
+
+```python
+self.setStyleSheet("""
+    QWidget {
+        background-color: #2b2b2b;
+        color: #dddddd;
+        font-family: 나눔고딕코딩;
+    }
+    QLineEdit, QTextEdit, QComboBox {
+        background-color: #3c3c3c;
+        border: 1px solid #555;
+    }
+    QPushButton {
+        background-color: #444;
+        border: 1px solid #666;
+        padding: 4px 8px;
+    }
+    QPushButton:hover {
+        background-color: #666;
+    }
+""")
+```
+
+> 위 코드를 메인윈도우의 `__init__` 또는 `.show()` 전에 넣으면 다크모드 적용됨
+
+---
+
+## 📦 다음 단계
+
+원하시면 이 4가지 기능이 모두 통합된 **PyQt5 전체 프로젝트 코드 + Qt Designer UI**를 새로 구성해서 드릴 수 있어요.
+예를 들어:
+
+* 탭1: 설정 (API로 panel 불러오기, 설정 저장)
+* 탭2: 자동실행 로그 (QTimer 실행 상태 확인)
+* 테마: 자동 다크모드 적용
+
+👉 원하시면 바로 제작해드릴게요. 어떤 구조를 원하시는지 간단히 말씀해주세요!
