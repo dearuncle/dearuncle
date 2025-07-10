@@ -96,3 +96,17 @@ def download_grafana_panels(GRAFANA_URL, GRAFANA_USER, GRAFANA_PASS,
     finally:
         log(f"❌ [{TARGET_PANEL}] 처리 종료.")
         #driver.quit()
+
+
+
+
+<button class="css-1apgo1t" data-testid="data-testid Dashboard template variables Variable Value DropDown value link text 20250704" aria-expanded="false" aria-controls="options-var-in_baseymd" id="var-in_baseymd" title="20250704"><span class="css-5t1gy9">20250704</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" width="14" height="14" class="css-1d3xu67-Icon"><path d="M17,9.17a1,1,0,0,0-1.41,0L12,12.71,8.46,9.17a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.42l4.24,4.24a1,1,0,0,0,1.42,0L17,10.59A1,1,0,0,0,17,9.17Z"></path></svg></button>
+
+        driver.find_element(By.CSS_SELECTOR, '[aria-controls="options-var-in_baseymd"]').click()
+        time.sleep(0.5)
+        driver.find_element(By.XPATH, '//div[@role="option" and text()="{IN_BASEYMD}"]').click()
+        time.sleep(0.5)
+
+ Message: no such element: Unable to locate element: {"method":"xpath","selector":"//div[@role="option" and text()="{IN_BASEYMD}"]"}
+  (Session info: chrome=137.0.7151.122)
+
