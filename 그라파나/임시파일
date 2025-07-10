@@ -1,1 +1,98 @@
-.
+def download_grafana_panels(GRAFANA_URL, GRAFANA_USER, GRAFANA_PASS,
+                             TARGET_PANEL_TITLES, CSV_DOWNLOAD_DIR, log):
+    chrome_options = Options()
+    chrome_options.add_experimental_option("prefs", {
+        "download.default_directory": os.path.abspath(CSV_DOWNLOAD_DIR),
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "safebrowsing.enabled": True
+    })
+
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        driver.get(GRAFANA_URL)
+        time.sleep(2)
+
+        driver.find_element(By.NAME, "user").send_keys(GRAFANA_USER)
+        driver.find_element(By.NAME, "password").send_keys(GRAFANA_PASS)
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+        time.sleep(3)
+        log("▶ 대시보드 진입 및 대기중 ... ")
+        driver.get(GRAFANA_URL)
+        time.sleep(5)
+
+        for TARGET_PANEL in TARGET_PANEL_TITLES:
+            try:
+                
+                panel_found = False
+                #last_height = driver.execute_script("return document.body.scrollHeight")
+                last_height = driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        return container.scrollHeight;
+    } else {
+        return document.body.scrollHeight;
+    }
+""")
+                while True:
+                    try:
+                        # 3️⃣ 정확한 data-testid로 section 찾기
+                        log(f"▶ 패널 찾는 중: {TARGET_PANEL}")
+                        section = driver.find_element(By.CSS_SELECTOR, f'section[data-testid*="Panel header {TARGET_PANEL}"]')
+                        log(f"▶ 대상 패널 찾음 : " + TARGET_PANEL)
+                        #driver.execute_script("arguments[0].scrollIntoView();", section)
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", section)
+                        time.sleep(0.5)
+                        menu_button = section.find_element(By.CSS_SELECTOR, f'button[data-testid*="Panel menu {TARGET_PANEL}"]')
+                        menu_button.click()
+                        time.sleep(1)
+                        driver.find_element(By.XPATH, "//span[text()='Inspect']").click()
+                        #inspect_button = driver.find_element(By.XPATH, "//span[text()='Inspect']")
+                        time.sleep(1)
+                        driver.find_element(By.XPATH, "//span[text()='Download CSV']").click()
+                        log(f"📥 CSV 다운로드: {TARGET_PANEL}")
+                        time.sleep(5)
+                        latest_csv = max(glob.glob(os.path.join(CSV_DOWNLOAD_DIR, "*.csv")), key=os.path.getctime)
+                        df = pd.read_csv(latest_csv)
+                        xlsx_path = os.path.splitext(latest_csv)[0] + ".xlsx"
+                        df.to_excel(xlsx_path, index=False)
+                        log(f"📊 변환 완료: {xlsx_path}")
+                        panel_found = True
+                        break
+                    except:
+                        #못찾았을경우 , 화면을 아래로 스크롤해서 다시 찾는다.
+                        log("대상 패널 못찾음 : 화면을 스크롤해서 다시 검색중..")
+                        driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        container.scrollTop += 400;
+        return container.scrollTop;
+    } else {
+        window.scrollBy(0, 400);
+        return window.pageYOffset;
+    }
+""")
+                        time.sleep(0.5)
+                        new_height = driver.execute_script("""
+    let container = document.querySelector('.scrollbar-view');
+    if (container) {
+        return container.scrollTop + container.clientHeight;
+    } else {
+        return window.pageYOffset + window.innerHeight;
+    }
+""")
+                        #driver.execute_script("window.scrollBy(0, 400);")
+                        #time.sleep(0.5)
+                        #new_height = driver.execute_script("return window.pageYOffset + window.innerHeight")
+                        if new_height >= last_height:
+                            break
+                if not panel_found:
+                    log(f"❌ [{TARGET_PANEL}] 패널을 찾을 수 없습니다.")
+            except Exception as e:
+                log(f"❌ 패널 처리 오류: {e}")
+    except Exception as e:
+        log(f"❌ 전체 오류: {e}")
+    finally:
+        log(f"❌ [{TARGET_PANEL}] 처리 종료.")
+        #driver.quit()
