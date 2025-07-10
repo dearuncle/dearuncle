@@ -113,3 +113,17 @@ def download_grafana_panels(GRAFANA_URL, GRAFANA_USER, GRAFANA_PASS,
 invalid selector: Unable to locate an element with the xpath expression //div[@role='option' and nomalize-space(text())='20250706'] because of the following error:
 SyntaxError: Failed to execute 'evaluate' on 'Document': The string '//div[@role='option' and nomalize-space(text())='20250706']' is not a valid XPath expression.
   (Session info: chrome=137.0.7151.122)
+
+
+try:
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", section)
+    time.sleep(0.5)
+    menu_button = section.find_element(By.CSS_SELECTOR, f'button[data-testid*="Panel menu {TARGET_PANEL}"]')
+    menu_button.click()
+except Exception as e:
+    log(f"⚠️ 일반 클릭 실패 → JS 강제 클릭 시도: {e}")
+    try:
+        driver.execute_script("arguments[0].click();", menu_button)
+    except Exception as ee:
+        log(f"❌ JS 클릭도 실패: {ee}")
+
