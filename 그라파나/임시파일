@@ -148,3 +148,30 @@ except Exception as e:
     for log in browser_logs:
         if log["level"] == "SEVERE":
             print(f"❌ JS 오류: {log['message']}")
+-----------------------------------------
+# ▶ JS 실행해서 blob 파일 강제 다운로드
+download_script = """
+(async () => {
+    const anchor = document.querySelector('a[download]');
+    if (!anchor) {
+        console.warn('❌ 다운로드 링크를 찾을 수 없습니다.');
+        return;
+    }
+    const blobUrl = anchor.href;
+
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = anchor.getAttribute('download') || 'data.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+})();
+"""
+
+driver.execute_script(download_script)
+
+# ▶ 다운로드 완료 대기
+time.sleep(5)
