@@ -127,3 +127,24 @@ except Exception as e:
     except Exception as ee:
         log(f"❌ JS 클릭도 실패: {ee}")
 
+--------------------------------------------
+   # 4️⃣ 로그 수집: 네트워크 응답 추적
+    print("\n📋 [네트워크 응답 로그]")
+    logs = driver.get_log("performance")
+    for entry in logs:
+        log = json.loads(entry["message"])["message"]
+        if log["method"] == "Network.responseReceived":
+            url = log["params"]["response"]["url"]
+            if "export" in url or ".csv" in url:
+                status = log["params"]["response"]["status"]
+                print(f"📦 URL: {url}")
+                print(f"🔍 상태 코드: {status}")
+                if status != 200:
+                    print("⚠️ CSV 다운로드 실패 감지됨!")
+
+    # 5️⃣ 브라우저 콘솔 오류 로그 추적
+    print("\n🧱 [브라우저 콘솔 에러 로그]")
+    browser_logs = driver.get_log("browser")
+    for log in browser_logs:
+        if log["level"] == "SEVERE":
+            print(f"❌ JS 오류: {log['message']}")
