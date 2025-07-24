@@ -1,0 +1,82 @@
+import sys
+import pandas as pd
+import psycopg2
+from sqlalchemy import create_engine, text
+
+# 1. 파라미터로 base_ymd 받기
+if len(sys.argv) < 2:
+    print("사용법: python load_csv.py <base_ymd>")
+    sys.exit(1)
+
+base_ymd = sys.argv[1]
+
+# 2. DB 연결
+engine = create_engine('postgresql+psycopg2://user:password@localhost:5432/yourdb')
+conn = engine.connect()
+raw_conn = engine.raw_connection()
+
+# 3. 테이블 스키마 정보 조회
+table_name = 'my_table'
+schema = 'public'
+
+query = f"""
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_schema = %s AND table_name = %s
+"""
+cursor = raw_conn.cursor()
+cursor.execute(query, (schema, table_name))
+columns_info = cursor.fetchall()
+cursor.close()
+
+# 4. 필터링 조건 생성
+#    (col1.notnull()) & (col1.str.match('^\d+$')) 형식으로 만들기
+conditions = []
+for col_name, data_type, is_nullable in columns_info:
+    cond = []
+
+    # NOT NULL이면 notnull() 체크
+    if is_nullable == 'NO':
+        cond.append(f"chunk['{col_name}'].notnull()")
+
+    # 숫자형이면 정규식으로 숫자 체크
+    if data_type in ('integer', 'bigint', 'numeric', 'real', 'double precision'):
+        cond.append(f"chunk['{col_name}'].astype(str).str.match('^\\\\d+(\\\\.\\\\d+)?$')")
+
+    # 문자열이면 예시 정규식 (필요 시 조건 완화 가능)
+    if data_type in ('character varying', 'text', 'char', 'varchar'):
+        cond.append(f"chunk['{col_name}'].astype(str).str.match('^[A-Za-z0-9가-힣 _-]*$')")
+
+    if cond:
+        conditions.append(" & ".join(cond))
+
+# 전체 필터 조합
+filter_expr = " & ".join(f"({c})" for c in conditions)
+print("▶ 자동 생성된 필터링 조건:")
+print(filter_expr)
+
+# 5. base_ymd 조건 삭제 후 valid 데이터 적재
+conn.execute(text("DELETE FROM my_table WHERE base_ymd = :ymd"), {"ymd": base_ymd})
+
+# 6. 파일 읽기 및 유효/오류 행 나누기
+chunk_iter = pd.read_csv("data.csv", chunksize=1000)
+
+for chunk in chunk_iter:
+    chunk["base_ymd"] = base_ymd
+
+    # 조건 평가
+    if filter_expr:
+        valid_rows = chunk.query(filter_expr)
+        invalid_rows = chunk.drop(valid_rows.index)
+    else:
+        valid_rows = chunk
+        invalid_rows = pd.DataFrame()  # 조건이 없으면 모두 유효
+
+    # 저장
+    if not valid_rows.empty:
+        valid_rows.to_sql("my_table", conn, if_exists="append", index=False)
+    if not invalid_rows.empty:
+        invalid_rows.to_sql("error_table", conn, if_exists="append", index=False)
+
+conn.close()
+print("✅ 적재 완료")
