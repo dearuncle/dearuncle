@@ -175,3 +175,63 @@ driver.execute_script(download_script)
 
 # ▶ 다운로드 완료 대기
 time.sleep(5)
+-----------------------------------------------------
+def launchQuery(conn, cursor, csv_dir_name):
+    try:
+        tgt_table="dc_"+csv_dir+"_"+csv_name
+        cursor.execute(info_query, ('portal_dev',tgt_table))
+        columns_info = cursor.fetchall()
+        print("--테이블컬럼정보 조회완료--"+tgt_table)
+        filter_expr=create_column_filter(columns_info)
+        print("--테이블필터링 생성완료--")
+        total_count=0
+        valid_count=0
+        invalid_count=0
+        columns_name = [col[0] for col in columns_info]
+        if 'base_ymd' in columns_name:
+            key_column = 'base_ymd'
+        elif 'etl_ymd' in columns_name:
+            key_column = 'etl_ymd'
+        else:
+            key_column = 'ymd'
+        delete_query = textwrap.dedent(""" delete from {}.{} where {} = %s """.format('portal_dev',tgt_table,key_column))
+        cursor.execute(delete_query, ('ymd',))
+        cursor.execute(delete_query, (in_baseymd,))
+        delete_query = textwrap.dedent(""" delete from {}.{} where {} = %s """.format('portal_dev',tgt_table+"_error",key_column))
+        cursor.execute(delete_query, (in_baseymd,))
+        #csvdata = pd.read_csv(csv_dir_name, chunksize=100000, skiprows=1)
+        csvdata = pd.read_csv(csv_dir_name, chunksize=100000)
+        for chunk in csvdata:
+            total_count += len(chunk)
+            if filter_expr:
+                #valid_rows = chunk.query(filter_expr)
+                valid_rows = chunk[eval(filter_expr)]
+                print("--valid ok --")
+                invalid_rows = chunk.drop(valid_rows.index)
+                print("--invalid ok --")
+            else:
+                valid_rows = chunk
+                invalid_rows = pd.DataFrame()
+            valid_count += len(valid_rows)
+            invalid_count += len(invalid_rows)
+            print("valid count: {}, invalid_count: {}".format(valid_count,invalid_count))
+            #buffer=StringIO()
+            buffer=io.BytesIO()
+            if not valid_rows.empty:
+                #valid_rows.to_sql("portal_dev."+tgt_table, conn, if_exists="append", index=False)
+                valid_rows.to_csv(buffer, index=False, header=False, encoding='utf-8')
+                buffer.seek(0)
+                unicode_buffer = io.StringIO(buffer.getvalue().decode('utf-8'))
+                cursor.copy_from(unicode_buffer, "portal_dev."+tgt_table, sep=',')
+            if not invalid_rows.empty:
+                #invalid_rows.to_sql("portal_dev."+tgt_table+"_error", conn, if_exists="append", index=False)
+                invalid_rows.to_csv(buffer, index=False, header=False, encoding='utf-8')
+                buffer.seek(0)
+                unicode_buffer = io.StringIO(buffer.getvalue().decode('utf-8'))
+                cursor.copy_from(buffer, "portal_dev."+tgt_table+"_error", sep=',')
+        print(u"전체 처리건수: {}".format(total_count).encode('utf-8'))
+        print(u"유효 처리건수: {}".format(valid_count).encode('utf-8'))
+        print(u"에러 처리건수: {}".format(invalid_count).encode('utf-8'))
+    except Exception as e:
+        print(u"오류 발생:".encode('utf-8'),)
+        print( e)
