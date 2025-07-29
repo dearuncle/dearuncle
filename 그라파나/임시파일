@@ -235,3 +235,55 @@ def launchQuery(conn, cursor, csv_dir_name):
     except Exception as e:
         print(u"오류 발생:".encode('utf-8'),)
         print( e)
+-----------------------------
+import pandas as pd
+import re
+import psycopg2
+
+# PostgreSQL 연결
+conn = psycopg2.connect(...)
+error_df = pd.read_sql("SELECT * FROM portal_dev.my_table_error", conn)
+
+# 대상 테이블의 컬럼 타입 조회
+cursor = conn.cursor()
+cursor.execute("""
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'portal_dev' AND table_name = 'my_table'
+""")
+columns_info = cursor.fetchall()
+
+# 정규식 매핑
+type_patterns = {
+    'integer': r'^-?\d+$',
+    'bigint': r'^-?\d+$',
+    'numeric': r'^-?\d+(\.\d+)?$',
+    'double precision': r'^-?\d+(\.\d+)?$',
+    'real': r'^-?\d+(\.\d+)?$',
+    'date': r'^\d{4}-\d{2}-\d{2}$',
+    'timestamp': r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}',
+    'boolean': r'^(true|false|t|f|1|0)$',
+    # text/varchar 등은 검사 안 함
+}
+
+# 에러 결과 누적용
+errors = []
+
+# 각 컬럼별 검사
+for col, dtype in columns_info:
+    pattern = type_patterns.get(dtype)
+    if pattern and col in error_df.columns:
+        invalid_mask = ~error_df[col].astype(str).str.match(pattern)
+        failed_rows = error_df[invalid_mask]
+        if not failed_rows.empty:
+            errors.append({
+                'column': col,
+                'type': dtype,
+                'invalid_count': len(failed_rows),
+                'invalid_examples': failed_rows[col].dropna().unique()[:5].tolist()
+            })
+
+# 결과 출력
+for e in errors:
+    print(u"❌ 컬럼 '{}'(type: {}) → {}건 실패".format(e['column'], e['type'], e['invalid_count']))
+    print(u"   예시:", e['invalid_examples'])
