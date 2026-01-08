@@ -1,0 +1,40 @@
+#!/usr/bin/expect -f
+
+proc cfg_load {filename} {
+    global cfg
+
+    array set cfg {}
+    #set fp [open "config.ini" r]
+    set fp [open $filename r]
+    set section ""
+
+    while {[gets $fp line] >= 0} {
+    set line [string trim $line]
+
+    # 빈 줄 / 주석 무시
+    if {$line eq "" || [string match "#*" $line]} {
+        continue
+    }
+    # 섹션 처리
+    if {[regexp {^\[(.+)\]} $line -> sec]} {
+        set section $sec
+        continue
+    }
+    # key=value 처리
+    if {[regexp {^([^=]+)=(.+)$} $line -> key value]} {
+        set key [string trim $key]
+        set value [string trim $value]
+        set cfg($section,$key) $value
+    }
+    }
+close $fp
+}
+cfg_load "config.ini"
+
+set host1 $cfg(host1_connection_info,host)
+set user1 $cfg(host1_connection_info,user)
+set password1 $cfg(host1_connection_info,password)
+
+puts "host=$host1"
+puts "user=$user1"
+puts "password=$password1"
