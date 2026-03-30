@@ -1,0 +1,252 @@
+위의 스크립트를 2개로 나눠서 개발해야해.
+1)쉘 : DB든 배열이든 파일명.csv , 원격지경로, 로컬경로 와 같은 매핑목록을 이용해서 TCL 스크립트에 인수로 호출한다.
+  일작업이면, 기준일은 오늘(yyyymmdd), 데이터기준일은 오늘-4일(yyyymmdd)로, 
+  원격지의 /DATA/BASE_DATE=기준일/원격지경로/YMD=데이터기준일/파일명.csv 를 TCL 스크립트를 통해서 가져온뒤, /로컬경로/파일명_데이터기준일.csv 로 변경한다.
+  월작업이면, 기준월은 오늘의월(yyyymm), 데이터기준일은 전월의 각일자목록(yyyymmdd) 예)기준월이202603월이면 데이터기준일은 20260201~20260228,
+  원격지의 /DATA/BASE_DATE=기준월/원격지경로/YMD=데이터기준일/파일명.csv 를 TCL 스크립트를 통해서 가져온뒤, /로컬경로/파일명_데이터기준일.csv 로 변경한다.
+  예) 월작업에서, 3월에 데이터가져올때 
+  원격지의 /DATA/BASE_DATE=202603/원격지경로/YMD=20260201/파일명.csv 은 /로컬경로/파일명_20260201.csv 가 되고,
+  원격지의 /DATA/BASE_DATE=202603/원격지경로/YMD=20260202/파일명.csv 은 /로컬경로/파일명_20260202.csv 가 되고,..
+  원격지의 /DATA/BASE_DATE=202603/원격지경로/YMD=20260228/파일명.csv 은 /로컬경로/파일명_20260228.csv 가 되고,
+
+2) TCL 스크립트 : 위의 쉘에서 호출한 파라메터를 통해 파일을 다운로드하고, 다운로드 이상여부를 로그파일에 기록한다.
+
+
+
+#!/bin/bash
+
+# 매핑 목록: "파일명|원격경로|로컬경로"
+MAPPING_LIST=(
+    "test_data.csv|sales/daily|/home/user/local/data"
+    "user_log.dat|system/logs|/home/user/local/logs"
+)
+
+# 1. 날짜 설정
+TODAY=$(date +%Y%m%d)
+CUR_MONTH=$(date +%Y%m)
+JOB_TYPE=$1  # 인자로 'day' 또는 'month'를 받음
+
+function call_tcl() {
+    local remote_full_path=$1
+    local local_full_path=$2
+    # TCL 스크립트 호출 (원격경로, 로컬경로 순서)
+    ./transfer.tcl "$remote_full_path" "$local_full_path"
+}
+
+# 2. 작업 분류
+if [ "$JOB_TYPE" == "day" ]; then
+    # 일작업: 기준일(오늘), 데이터기준일(오늘-4일)
+    BASE_DATE=$TODAY
+    DATA_DATE=$(date -d "$TODAY -4 days" +%Y%m%d)
+
+    for item in "${MAPPING_LIST[@]}"; do
+        IFS='|' read -r FILE REMOTE_SUB LOCAL_DIR <<< "$item"
+        
+        REMOTE_P="/DATA/BASE_DATE=$BASE_DATE/$REMOTE_SUB/YMD=$DATA_DATE/$FILE"
+        PURE_NAME=$(echo "$FILE" | cut -d'.' -f1)
+        EXT=$(echo "$FILE" | cut -d'.' -f2-)
+        LOCAL_P="$LOCAL_DIR/${PURE_NAME}_${DATA_DATE}.${EXT}"
+
+        call_tcl "$REMOTE_P" "$LOCAL_P"
+    done
+
+elif [ "$JOB_TYPE" == "month" ]; then
+    # 월작업: 기준월(이번달), 데이터기준일(전월 전체 일자)
+    BASE_DATE=$CUR_MONTH
+    # 전월의 마지막 날짜 구하기 (예: 2026-02-28)
+    LAST_DAY_PREV_MONTH=$(date -d "$(date +%Y-%m-01) -1 day" +%Y%m%d)
+    PREV_MONTH=$(date -d "$LAST_DAY_PREV_MONTH" +%Y%m)
+
+    # 전월 01일부터 마지막 날까지 루프
+    for DATA_DATE in $(seq -f "${PREV_MONTH}%02g" 1 ${LAST_DAY_PREV_MONTH:6:2}); do
+        for item in "${MAPPING_LIST[@]}"; do
+            IFS='|' read -r FILE REMOTE_SUB LOCAL_DIR <<< "$item"
+            
+            REMOTE_P="/DATA/BASE_DATE=$BASE_DATE/$REMOTE_SUB/YMD=$DATA_DATE/$FILE"
+            PURE_NAME=$(echo "$FILE" | cut -d'.' -f1)
+            EXT=$(echo "$FILE" | cut -d'.' -f2-)
+            LOCAL_P="$LOCAL_DIR/${PURE_NAME}_${DATA_DATE}.${EXT}"
+
+            call_tcl "$REMOTE_P" "$LOCAL_P"
+        done
+    done
+fi
+
+
+#!/usr/bin/expect
+
+set timeout 120
+set remote_path [lindex $argv 0]
+set local_path  [lindex $argv 1]
+
+# 접속 정보
+set user "username"
+set host "hostname"
+set pw   "password"
+set log_file "sftp_transfer.log"
+
+# 로컬 디렉토리가 없으면 생성
+file mkdir [file dirname $local_path]
+
+spawn sftp $user@$host
+expect {
+    "password:" { send "$pw\r" }
+    "yes/no" { send "yes\r"; exp_continue }
+}
+expect "sftp>"
+
+# 파일 전송 (원격경로 -> 로컬경로 지정)
+send "get \"$remote_path\" \"$local_path\"\r"
+
+set status "SUCCESS"
+expect {
+    "Fetching" { 
+        expect "sftp>" 
+    }
+    -re "not found|Failure|Permission" {
+        set status "FAILED"
+        expect "sftp>"
+    }
+    timeout {
+        set status "TIMEOUT"
+    }
+}
+
+# 로그 기록
+set now [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"]
+set fp [open $log_file a]
+puts $fp "$now | SRC:$remote_path | DEST:$local_path | RESULT:$status"
+close $fp
+
+send "bye\r"
+expect eof
+
+# 쉘에서 성공여부를 알 수 있도록 종료코드 반환
+if {$status == "SUCCESS"} { exit 0 } else { exit 1 }
+
+
+위의 스크립트를 2개로 나눠서 개발해야해.
+1)쉘 : DB든 배열이든 파일명.csv , 원격지경로, 로컬경로 와 같은 매핑목록을 이용해서 TCL 스크립트에 인수로 호출한다.
+  일작업이면, 기준일은 오늘(yyyymmdd), 데이터기준일은 오늘-4일(yyyymmdd)로, 
+  원격지의 /DATA/BASE_DATE=기준일/원격지경로/YMD=데이터기준일/파일명.csv 를 TCL 스크립트를 통해서 가져온뒤, /로컬경로/파일명_데이터기준일.csv 로 변경한다.
+  월작업이면, 기준월은 오늘의월(yyyymm), 데이터기준일은 전월의 각일자목록(yyyymmdd) 예)기준월이202603월이면 데이터기준일은 20260201~20260228,
+  원격지의 /DATA/BASE_DATE=기준월/원격지경로/YMD=데이터기준일/파일명.csv 를 TCL 스크립트를 통해서 가져온뒤, /로컬경로/파일명_데이터기준일.csv 로 변경한다.
+  예) 월작업에서, 3월에 데이터가져올때 
+  원격지의 /DATA/BASE_DATE=202603/원격지경로/YMD=20260201/파일명.csv 은 /로컬경로/파일명_20260201.csv 가 되고,
+  원격지의 /DATA/BASE_DATE=202603/원격지경로/YMD=20260202/파일명.csv 은 /로컬경로/파일명_20260202.csv 가 되고,..
+  원격지의 /DATA/BASE_DATE=202603/원격지경로/YMD=20260228/파일명.csv 은 /로컬경로/파일명_20260228.csv 가 되고,
+
+2) TCL 스크립트 : 위의 쉘에서 호출한 파라메터를 통해 파일을 다운로드하고, 다운로드 이상여부를 로그파일에 기록한다.
+
+
+
+#!/bin/bash
+
+# 매핑 목록: "파일명|원격경로|로컬경로"
+MAPPING_LIST=(
+    "test_data.csv|sales/daily|/home/user/local/data"
+    "user_log.dat|system/logs|/home/user/local/logs"
+)
+
+# 1. 날짜 설정
+TODAY=$(date +%Y%m%d)
+CUR_MONTH=$(date +%Y%m)
+JOB_TYPE=$1  # 인자로 'day' 또는 'month'를 받음
+
+function call_tcl() {
+    local remote_full_path=$1
+    local local_full_path=$2
+    # TCL 스크립트 호출 (원격경로, 로컬경로 순서)
+    ./transfer.tcl "$remote_full_path" "$local_full_path"
+}
+
+# 2. 작업 분류
+if [ "$JOB_TYPE" == "day" ]; then
+    # 일작업: 기준일(오늘), 데이터기준일(오늘-4일)
+    BASE_DATE=$TODAY
+    DATA_DATE=$(date -d "$TODAY -4 days" +%Y%m%d)
+
+    for item in "${MAPPING_LIST[@]}"; do
+        IFS='|' read -r FILE REMOTE_SUB LOCAL_DIR <<< "$item"
+        
+        REMOTE_P="/DATA/BASE_DATE=$BASE_DATE/$REMOTE_SUB/YMD=$DATA_DATE/$FILE"
+        PURE_NAME=$(echo "$FILE" | cut -d'.' -f1)
+        EXT=$(echo "$FILE" | cut -d'.' -f2-)
+        LOCAL_P="$LOCAL_DIR/${PURE_NAME}_${DATA_DATE}.${EXT}"
+
+        call_tcl "$REMOTE_P" "$LOCAL_P"
+    done
+
+elif [ "$JOB_TYPE" == "month" ]; then
+    # 월작업: 기준월(이번달), 데이터기준일(전월 전체 일자)
+    BASE_DATE=$CUR_MONTH
+    # 전월의 마지막 날짜 구하기 (예: 2026-02-28)
+    LAST_DAY_PREV_MONTH=$(date -d "$(date +%Y-%m-01) -1 day" +%Y%m%d)
+    PREV_MONTH=$(date -d "$LAST_DAY_PREV_MONTH" +%Y%m)
+
+    # 전월 01일부터 마지막 날까지 루프
+    for DATA_DATE in $(seq -f "${PREV_MONTH}%02g" 1 ${LAST_DAY_PREV_MONTH:6:2}); do
+        for item in "${MAPPING_LIST[@]}"; do
+            IFS='|' read -r FILE REMOTE_SUB LOCAL_DIR <<< "$item"
+            
+            REMOTE_P="/DATA/BASE_DATE=$BASE_DATE/$REMOTE_SUB/YMD=$DATA_DATE/$FILE"
+            PURE_NAME=$(echo "$FILE" | cut -d'.' -f1)
+            EXT=$(echo "$FILE" | cut -d'.' -f2-)
+            LOCAL_P="$LOCAL_DIR/${PURE_NAME}_${DATA_DATE}.${EXT}"
+
+            call_tcl "$REMOTE_P" "$LOCAL_P"
+        done
+    done
+fi
+
+
+#!/usr/bin/expect
+
+set timeout 120
+set remote_path [lindex $argv 0]
+set local_path  [lindex $argv 1]
+
+# 접속 정보
+set user "username"
+set host "hostname"
+set pw   "password"
+set log_file "sftp_transfer.log"
+
+# 로컬 디렉토리가 없으면 생성
+file mkdir [file dirname $local_path]
+
+spawn sftp $user@$host
+expect {
+    "password:" { send "$pw\r" }
+    "yes/no" { send "yes\r"; exp_continue }
+}
+expect "sftp>"
+
+# 파일 전송 (원격경로 -> 로컬경로 지정)
+send "get \"$remote_path\" \"$local_path\"\r"
+
+set status "SUCCESS"
+expect {
+    "Fetching" { 
+        expect "sftp>" 
+    }
+    -re "not found|Failure|Permission" {
+        set status "FAILED"
+        expect "sftp>"
+    }
+    timeout {
+        set status "TIMEOUT"
+    }
+}
+
+# 로그 기록
+set now [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"]
+set fp [open $log_file a]
+puts $fp "$now | SRC:$remote_path | DEST:$local_path | RESULT:$status"
+close $fp
+
+send "bye\r"
+expect eof
+
+# 쉘에서 성공여부를 알 수 있도록 종료코드 반환
+if {$status == "SUCCESS"} { exit 0 } else { exit 1 }
