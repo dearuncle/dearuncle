@@ -1,0 +1,27 @@
+# 1. 먼저 상위 경로에서 폴더 목록만 가져오기
+send "ls $base_path\r"
+expect "sftp>"
+set dir_buffer $expect_out(buffer)
+
+# 2. date=숫자8자리 패턴의 폴더들만 추출
+set date_dirs [regexp -all -inline {date=\d{8}} $dir_buffer]
+
+# 3. 추출된 각 폴더를 순회하며 파일 목록 확인
+foreach d_dir $date_dirs {
+    send "ls -l $base_path/$d_dir\r"
+    expect "sftp>"
+    set file_buffer $expect_out(buffer)
+
+    # 여기서 파일 정보 파싱 (확장자: csv, zip, dat 등)
+    set file_pattern {([^\s]+)\s+\d+\s+[^\s]+\s+[^\s]+\s+(\d+)\s+([A-Z][a-z]{2}\s+\d+\s+[\d:]+)\s+([^\s]+(?:csv|csv\.zip|zip|dat))}
+    set matches [regexp -all -inline $file_pattern $file_buffer]
+
+    foreach {full permissions size f_date file_name} $matches {
+        # 파일 다운로드 및 로그 기록 로직 (이전과 동일)
+        set full_remote_path "$base_path/$d_dir/$file_name"
+        send "get $full_remote_path\r"
+        expect "sftp>"
+        
+        # 로그 기록...
+    }
+}
