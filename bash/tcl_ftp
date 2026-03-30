@@ -25,3 +25,76 @@ foreach d_dir $date_dirs {
         # 로그 기록...
     }
 }
+
+
+
+#!/usr/bin/expect
+
+# 1. 환경 설정
+set timeout 120
+set yesterday [clock format [clock add [clock seconds] -1 days] -format %Y%m%d]
+set my_date_dir "my_date=$yesterday"
+
+set user "username"
+set host "hostname"
+set pw "password"
+set base_path "/data/$my_date_dir/tablename"
+
+# 로그 파일 설정 (오늘 날짜 기준 로그)
+set log_file "transfer_report_[clock format [clock seconds] -format %Y%m%d].log"
+
+spawn sftp $user@$host
+expect "password:" { send "$pw\r" }
+expect "sftp>"
+
+# 2. 리스트 확보 (ls -R 대신 상세 정보를 위해 ls -lR 사용)
+# 상세 정보(크기, 날짜)를 파싱하기 위해 -l 옵션을 추가합니다.
+send "ls -lR $base_path\r"
+expect "sftp>"
+
+set buffer $expect_out(buffer)
+
+# 3. 정규표현식 패턴 (다양한 확장자 대응)
+# 확장자: csv, csv.zip, zip, dat
+# 패턴 설명: date=(8자리) / 권한 크기 월 일 시간 파일명 순서의 ls -l 출력 파싱
+set pattern {date=(\d{8})/([^\s]+)\s+\d+\s+[^\s]+\s+[^\s]+\s+(\d+)\s+([A-Z][a-z]{2}\s+\d+\s+[\d:]+)\s+([^\s]+(?:csv|csv\.zip|zip|dat))}
+set matches [regexp -all -inline $pattern $buffer]
+
+# 4. 파일 다운로드 및 상세 로그 기록
+puts "\n[File Transfer Started]"
+set fp [open $log_file a]
+puts $fp "Transfer_Time|My_Date|Date_Dir|Filename|Size(bytes)|File_Date|Status"
+
+foreach {full_match extracted_date permissions size f_date file_name} $matches {
+    
+    # 전체 원격 경로 재구성 (ls -lR 결과에 따라 경로 조합)
+    set full_remote_path "$base_path/date=$extracted_date/$file_name"
+    
+    puts "--- Downloading: $file_name ($size bytes) ---"
+    
+    send "get $full_remote_path\r"
+    expect {
+        "Fetching" { 
+            expect "sftp>"
+            set status "SUCCESS"
+        }
+        -re "not found|Failure|Permission" {
+            set status "FAILED"
+            expect "sftp>"
+        }
+        timeout {
+            set status "TIMEOUT"
+        }
+    }
+    
+    # 상세 로그 기록 (파이프 구분자 사용)
+    set now [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"]
+    puts $fp "$now|$yesterday|$extracted_date|$file_name|$size|$f_date|$status"
+    flush $fp
+}
+
+close $fp
+send "bye\r"
+expect eof
+
+puts "\n[All tasks finished. Check $log_file for details.]"
